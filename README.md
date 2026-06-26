@@ -196,4 +196,5 @@ Each host includes cache manifest files for offline functionality:
 
 **Author:** [BlackArch](https://t.me/sudoBlackArch)  
 **Telegram:** [PlayStation Pulse](https://t.me/PlayStation_Pulse)  
+**EditedBy HoussamLovy
 
