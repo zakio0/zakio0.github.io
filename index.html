@@ -701,7 +701,7 @@
         if (major === 5 && minor === 5) return '505';
         if (major === 6 && minor === 72) return '672';
         if (major === 7 || (major === 8 && minor <= 52)) return '700';
-        if (major >= 9) return '900';  /* 9.xx, 10.xx, 11.xx, 12.xx+ all redirect to 900 */
+        if (major === 9) return '900';
         return null;
       }
 
