@@ -1,0 +1,101 @@
+CACHE MANIFEST
+# Z@ki OpenLine v2.3 — FW 9.00-13.52 | cache versioned exploit core modules
+# Bump this comment to force a cache refresh on all clients.
+
+CACHE:
+
+# ── Entry / router ────────────────────────────────────────────────────────────
+index.html
+
+# ── Chain runner pages ────────────────────────────────────────────────────────
+run_lapse.html
+run_poops.html
+run_slop.html
+run_psfree.html
+css/run_css.html
+
+# ── Lapse / Poops chain (FW 11.00-13.00) ─────────────────────────────────────
+chain_lapse.js
+chain_poops.js
+core.js
+core.js?v=10
+mem.js
+int64.js
+ps4_offsets.js
+rpc_worker.js
+payload.bin
+patches/1100.bin
+patches/1150.bin
+patches/1152.bin
+patches/1200.bin
+patches/1250.bin
+patches/1300.bin
+
+# ── SlopKit chain (FW 13.02-13.52) ───────────────────────────────────────────
+slop/jb.js
+slop/core.js
+slop/core.js?v=10
+slop/mem.js
+slop/int64.js
+slop/ps4_offsets.js
+slop/rpc_worker.js
+slop/goldhen.bin
+slop/payload2.bin
+slop/patches/1302.bin
+slop/patches/1350.bin
+slop/patches/1352.bin
+
+# ── PSFree chain (FW 9.00-9.60) ──────────────────────────────────────────────
+psfree/alert.js
+psfree/config.js
+psfree/psfree.js
+psfree/lapse.js
+psfree/loader.js
+psfree/payloads.js
+psfree/send.js
+psfree/module/chain.js
+psfree/module/constants.js
+psfree/module/int64.js
+psfree/module/mem.js
+psfree/module/memtools.js
+psfree/module/offset.js
+psfree/module/rw.js
+psfree/module/utils.js
+psfree/module/view.js
+psfree/lapse/900.js
+psfree/lapse/903.js
+psfree/lapse/950.js
+psfree/rop/900.js
+psfree/rop/950.js
+psfree/kpatch/900.elf
+psfree/kpatch/9001.elf
+psfree/kpatch/900OK.elf
+psfree/kpatch/903.elf
+psfree/kpatch/950.elf
+psfree/kpatch/9501.elf
+psfree/goldhen.bin
+
+# ── CSSKern chain (FW 10.00-10.50) ───────────────────────────────────────────
+css/src/main.js
+css/src/misc.js
+css/src/loader.js
+css/src/lapse.js
+css/src/netctrl.js
+css/src/workers.js
+css/src/worker.js
+css/src/utils.mjs
+css/src/payload.bin
+css/src/ps4/constants.js
+css/src/ps4/kernel.js
+css/src/ps4/userland.js
+css/src/ps4/userland.mjs
+css/src/ps4/offsets.mjs
+css/src/ps4/patches/1000.bin
+css/src/ps4/patches/1050.bin
+css/includes/script.js
+
+# ── Assets ────────────────────────────────────────────────────────────────────
+logo_raw.png
+
+NETWORK:
+*

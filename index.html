@@ -1,851 +1,459 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" manifest="cache.appcache">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zaki OpenLine — PS4 Host Selector</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>《 Z@ki OpenLine 》 PS4 Jailbreak by HoussamLovy</title>
   <style>
-    * {
+    :root {
+      --bg:     #07090c;
+      --panel:  rgba(15,19,25,.84);
+      --border: rgba(255,255,255,.072);
+      --text:   #eef2f7;
+      --muted:  #87919e;
+      --green:  #69e59a;
+      --yellow: #e4c66f;
+      --red:    #e17d78;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
       margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+      background:
+        radial-gradient(circle at 50% -15%, rgba(70,110,255,.14), transparent 42%),
+        radial-gradient(circle at 10%  80%, rgba(50,210,130,.07), transparent 36%),
+        var(--bg);
+      color: var(--text);
+      font: 15px/1.45 "Segoe UI", system-ui, -apple-system, sans-serif;
     }
 
-    html,
     body {
-      height: 100%;
-    }
-
-    body {
-      background: linear-gradient(135deg, #0f2318 0%, #1a3e2e 25%, #2d5f47 50%, #1a3e2e 75%, #0f2318 100%);
-      background-attachment: fixed;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      color: #ffffff;
-      min-height: 100vh;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    .bg-decoration {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    .floating-shape {
-      position: absolute;
-      opacity: 0.08;
-      animation: float 25s infinite linear;
-    }
-
-    .shape-1 {
-      width: 120px;
-      height: 120px;
-      background: linear-gradient(45deg, #34d399, #10b981);
-      border-radius: 50%;
-      top: 15%;
-      left: 8%;
-      animation-delay: 0s;
-    }
-
-    .shape-2 {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(45deg, #059669, #10b981);
-      border-radius: 30%;
-      top: 70%;
-      right: 12%;
-      animation-delay: -8s;
-    }
-
-    .shape-3 {
-      width: 100px;
-      height: 100px;
-      background: linear-gradient(45deg, #047857, #34d399);
-      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-      top: 45%;
-      left: 85%;
-      animation-delay: -15s;
-    }
-
-    @keyframes float {
-      0% {
-        transform: translateY(0px) rotate(0deg);
-        opacity: 0.08;
-      }
-
-      50% {
-        transform: translateY(-30px) rotate(180deg);
-        opacity: 0.12;
-      }
-
-      100% {
-        transform: translateY(0px) rotate(360deg);
-        opacity: 0.08;
-      }
-    }
-
-    /* ── AUTO-DETECT BANNER ── */
-    #detect-banner {
-      display: none;
-      /* shown by JS when on PS4 */
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 20;
-      margin: 1.2rem auto 0;
-      max-width: 860px;
-      width: calc(100% - 2rem);
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 95, 70, 0.18));
-      border: 2px solid rgba(16, 185, 129, 0.5);
-      border-radius: 16px;
-      padding: 1rem 1.4rem;
-      display: none;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    #detect-banner.visible {
-      display: flex;
-    }
-
-    .detect-icon {
-      font-size: 1.6rem;
-      flex-shrink: 0;
-    }
-
-    .detect-text {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .detect-text strong {
-      display: block;
-      font-size: 1rem;
-      color: #10b981;
-      font-weight: 700;
-      margin-bottom: 0.2rem;
-    }
-
-    .detect-text span {
-      font-size: 0.85rem;
-      color: #a7f3d0;
-    }
-
-    .detect-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      flex-shrink: 0;
-    }
-
-    #countdown-ring {
-      position: relative;
-      width: 44px;
-      height: 44px;
-      flex-shrink: 0;
-    }
-
-    #countdown-ring svg {
-      transform: rotate(-90deg);
-    }
-
-    #countdown-ring circle.bg {
-      fill: none;
-      stroke: rgba(16, 185, 129, 0.2);
-      stroke-width: 4;
-    }
-
-    #countdown-ring circle.progress {
-      fill: none;
-      stroke: #10b981;
-      stroke-width: 4;
-      stroke-linecap: round;
-      stroke-dasharray: 113;
-      /* 2π×18 */
-      stroke-dashoffset: 0;
-      transition: stroke-dashoffset 1s linear;
-    }
-
-    #countdown-num {
-      position: absolute;
-      inset: 0;
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #10b981;
+      padding: 18px;
+      overflow: hidden;
+      padding-top:  env(safe-area-inset-top,  0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
-    #btn-cancel-redirect {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1.5px solid rgba(239, 68, 68, 0.5);
-      color: #fca5a5;
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 0.4rem 0.9rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-
-    #btn-cancel-redirect:hover {
-      background: rgba(239, 68, 68, 0.3);
-      border-color: rgba(239, 68, 68, 0.8);
-    }
-
-    /* cancelled state */
-    #detect-banner.cancelled {
-      background: linear-gradient(135deg, rgba(100, 116, 139, 0.12), rgba(51, 65, 85, 0.18));
-      border-color: rgba(100, 116, 139, 0.4);
-    }
-
-    #detect-banner.cancelled .detect-text strong {
-      color: #94a3b8;
-    }
-
-    #detect-banner.cancelled .detect-text span {
-      color: #cbd5e1;
-    }
-
-    /* ── LAYOUT ── */
-    .container {
-      position: relative;
-      z-index: 2;
-      min-height: 100vh;
+    #app {
+      width: min(500px, 100%);
       display: flex;
       flex-direction: column;
-      justify-content: center;
+    }
+
+    /* ── HEADER ─────────────────────────────────── */
+    #brand { text-align: center; margin-bottom: 16px; }
+
+    #logo {
+      width: 200px; height: 200px;
+      object-fit: cover;
+      border-radius: 20px;
+      display: block;
+      margin: 0 auto 12px;
+      border: 1px solid rgba(255,255,255,.13);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.024), 0 14px 40px rgba(0,0,0,.52);
+    }
+
+    #title {
+      margin: 0 0 16px;
+      font-size: 32px;
+      font-weight: 750;
+      letter-spacing: .04em;
+    }
+
+    /* ── BIG FW BADGE ───────────────────────────── */
+    #fwBadge {
+      display: inline-flex;
       align-items: center;
-      padding: 1rem 2rem;
-      padding-bottom: 100px;
-      padding-top: 100px;
+      gap: 14px;
+      padding: 10px 24px;
+      border-radius: 18px;
+      background: rgba(105,229,154,.065);
+      border: 1px solid rgba(105,229,154,.22);
+      box-shadow:
+        0 0 26px rgba(105,229,154,.16),
+        0 0 52px rgba(105,229,154,.06),
+        inset 0 1px 0 rgba(105,229,154,.12);
+      margin-bottom: 20px;
     }
 
-    .header-section {
-      text-align: center;
-      margin-bottom: 1rem;
+    #fwValue {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--green);
+      text-shadow:
+        0 0 16px rgba(105,229,154,.8),
+        0 0 34px rgba(105,229,154,.35);
+      letter-spacing: .05em;
+      line-height: 1;
     }
 
-    .main-title {
-      font-size: 3rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.02em;
-    }
-
-    .subtitle {
-      font-size: 1.2rem;
-      color: #b6b8ff;
-      font-weight: 500;
-      margin-bottom: 1rem;
-    }
-
-    .description {
-      font-size: 1rem;
-      color: #c5c7ff;
-      font-weight: 400;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .version-selection {
-      max-width: 1200px;
-      width: 100%;
-    }
-
-    .section-title {
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: #ffffff;
-      text-align: center;
-      margin: 2rem 0 1.5rem 0;
+    #fwStatus {
+      padding: 5px 13px;
+      border-radius: 999px;
+      background: rgba(105,229,154,.10);
+      border: 1px solid rgba(105,229,154,.24);
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: .16em;
       text-transform: uppercase;
-      letter-spacing: 1px;
     }
 
-    .version-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
-      margin: 2rem 0;
+    #subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
     }
 
-    /* ── VERSION CARDS ── */
-    .version-card {
-      background: rgba(30, 41, 59, 0.4);
-      backdrop-filter: blur(20px);
-      border: 2px solid rgba(159, 88, 227, 0.3);
-      border-radius: 16px;
-      padding: 2rem;
-      text-align: center;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      position: relative;
+    /* ── MAIN PANEL ─────────────────────────────── */
+    #panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
       overflow: hidden;
+      box-shadow:
+        0 22px 65px rgba(0,0,0,.44),
+        inset 0 1px 0 rgba(255,255,255,.024);
+      backdrop-filter: blur(14px);
     }
 
-    .version-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      border-radius: 16px 16px 0 0;
+    /* ── STATE BOX ──────────────────────────────── */
+    #stateBox {
+      padding: 15px 18px 13px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.013);
     }
 
-    /* Recommended badge (injected by JS) */
-    .recommended-badge {
-      position: absolute;
-      top: 0.6rem;
-      right: 0.6rem;
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: #fff;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      padding: 0.25rem 0.6rem;
-      border-radius: 20px;
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
-      animation: pulse-badge 2s ease-in-out infinite;
+    #state {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 18px;
+      font-weight: 750;
+      letter-spacing: .03em;
     }
 
-    @keyframes pulse-badge {
+    #state.ok   { color: var(--green);  }
+    #state.bad  { color: var(--red);    }
+    #state.warn { color: var(--yellow); }
 
-      0%,
-      100% {
-        box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
-      }
-
-      50% {
-        box-shadow: 0 0 22px rgba(16, 185, 129, 0.9);
-      }
+    #statusDot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+      background: var(--yellow);
+      box-shadow: 0 0 12px rgba(228,198,111,.5);
+      transition: background .4s, box-shadow .4s;
     }
 
-    /* Recommended card glow override */
-    .version-card.is-recommended {
-      border-color: rgba(16, 185, 129, 0.7) !important;
-      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.3), 0 20px 40px rgba(16, 185, 129, 0.2);
+    #state.bad  #statusDot { background: var(--red);   box-shadow: 0 0 12px rgba(225,125,120,.55), 0 0 24px rgba(225,125,120,.25); }
+    #state.ok   #statusDot { background: var(--green); box-shadow: 0 0 12px rgba(105,229,154,.65), 0 0 24px rgba(105,229,154,.28); }
+
+    #det { margin-top: 6px; color: var(--muted); font-size: 11px; padding-left: 19px; }
+    #det b { color: var(--text); font-weight: 650; }
+
+    /* ── INFO ROWS ──────────────────────────────── */
+    .infoRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.042);
     }
 
-    /* 5.05 */
-    .version-card.fw-505::before {
-      background: linear-gradient(90deg, #34d399, #10b981);
-    }
+    .infoLabel { color: var(--muted); font-size: 12px; }
+    .infoValue { font-size: 12px; font-weight: 650; }
+    .ok  { color: var(--green); }
+    .bad { color: var(--red);   }
 
-    .version-card.fw-505 {
-      border-color: rgba(52, 211, 153, 0.5);
-    }
+    /* ── CACHE BOX ──────────────────────────────── */
+    #cacheBox { padding: 10px 18px; color: var(--muted); font-size: 11px; min-height: 16px; }
+    #cache.cacheok { color: var(--green); }
 
-    .version-card.fw-505:hover,
-    .version-card.fw-505:focus {
-      border-color: rgba(16, 185, 129, 0.8);
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(52, 211, 153, 0.3);
-      outline: none;
-    }
-
-    .version-card.fw-505 .version-badge {
-      background: linear-gradient(90deg, #34d399, #10b981);
-    }
-
-    /* 6.72 */
-    .version-card.fw-672::before {
-      background: linear-gradient(90deg, #059669, #10b981);
-    }
-
-    .version-card.fw-672 {
-      border-color: rgba(5, 150, 105, 0.5);
-    }
-
-    .version-card.fw-672:hover,
-    .version-card.fw-672:focus {
-      border-color: rgba(16, 185, 129, 0.8);
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(5, 150, 105, 0.3);
-      outline: none;
-    }
-
-    .version-card.fw-672 .version-badge {
-      background: linear-gradient(90deg, #059669, #10b981);
-    }
-
-    /* 7.xx-8.xx */
-    .version-card.fw-700::before {
-      background: linear-gradient(90deg, #047857, #34d399);
-    }
-
-    .version-card.fw-700 {
-      border-color: rgba(4, 120, 87, 0.5);
-    }
-
-    .version-card.fw-700:hover,
-    .version-card.fw-700:focus {
-      border-color: rgba(52, 211, 153, 0.8);
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(4, 120, 87, 0.3);
-      outline: none;
-    }
-
-    .version-card.fw-700 .version-badge {
-      background: linear-gradient(90deg, #047857, #34d399);
-    }
-
-    /* 9.xx */
-    .version-card.fw-900::before {
-      background: linear-gradient(90deg, #10b981, #34d399);
-    }
-
-    .version-card.fw-900 {
-      border-color: rgba(16, 185, 129, 0.5);
-    }
-
-    .version-card.fw-900:hover,
-    .version-card.fw-900:focus {
-      border-color: rgba(52, 211, 153, 0.8);
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
-      outline: none;
-    }
-
-    .version-card.fw-900 .version-badge {
-      background: linear-gradient(90deg, #10b981, #34d399);
-    }
-
-    .version-badge {
-      display: inline-block;
-      color: #ffffff;
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 0.4rem 1rem;
-      border-radius: 20px;
-      margin-bottom: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .version-title {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 0.5rem;
-    }
-
-    .version-number {
-      font-size: 1rem;
-      color: #10b981;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-
-    .version-description {
-      font-size: 0.9rem;
-      color: #b6b8ff;
-      line-height: 1.5;
-    }
-
-    /* ── Credits ── */
-    .credits {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(135deg, #0f2318 0%, #1a3e39 25%, #2d5f3e 50%, #1a3e29 75%, #0f2312 100%);
-      backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(99, 102, 241, 0.2);
-      padding: 1rem;
+    /* ── FOOTER ─────────────────────────────────── */
+    #footer {
       text-align: center;
-      font-size: 1rem;
-      z-index: 10;
+      margin-top: 14px;
+      color: #4a5560;
+      font-size: 9px;
+      letter-spacing: .09em;
+      text-transform: uppercase;
     }
 
-    .credits-line {
-      margin: 0.25rem 0;
-    }
-
-    .Lovy-link {
-      color: #38bdf8;
-      text-decoration: none;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      transition: color 0.3s ease;
-    }
-
-    .Lovy-link:hover {
-      color: #7dd3fc;
-    }
-
-    .credit-label {
-      color: #ffffff;
-      font-weight: 500;
-    }
-
-    .credit-link {
-      color: #ec4899;
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.3s;
-    }
-
-    .credit-link:hover {
-      color: #ff8fc7;
-    }
-
-    .telegram-link {
-      color: #8b5cf6;
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.3s;
-    }
-
-    .telegram-link:hover {
-      color: #b595ff;
-    }
-
-    /* ── Responsive ── */
-    @media (max-width: 1100px) {
-      .version-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .version-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-    }
-
-    @media (max-width: 768px) {
-
-      html,
-      body {
-        overflow-y: auto;
-        overflow-x: hidden;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .main-title {
-        font-size: 2.2rem;
-      }
-
-      .container {
-        padding: 1.5rem 1rem;
-        padding-bottom: 120px;
-        padding-top: 2rem;
-        justify-content: flex-start;
-        min-height: auto;
-      }
-
-      .section-title {
-        margin: 1rem 0;
-      }
-
-      .version-grid {
-        gap: 1rem;
-        margin: 1rem 0;
-      }
-
-      .version-card {
-        padding: 1.5rem;
-      }
-
-      .credits {
-        position: relative;
-        margin-top: 1rem;
-      }
-
-      #detect-banner {
-        flex-direction: column;
-        text-align: center;
-      }
-
-      .detect-actions {
-        justify-content: center;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-
-      .floating-shape,
-      .recommended-badge {
-        animation: none;
-      }
+    @media (max-width: 420px) {
+      body { padding: 12px; }
+      #logo { width: 90px; height: 90px; border-radius: 20px; }
+      #title { font-size: 22px; }
+      #fwBadge { padding: 8px 16px; gap: 10px; }
+      #fwValue { font-size: 28px; }
     }
   </style>
 </head>
 
 <body>
+  <div id="app">
 
-  <div class="bg-decoration">
-    <div class="floating-shape shape-1"></div>
-    <div class="floating-shape shape-2"></div>
-    <div class="floating-shape shape-3"></div>
+    <!-- Header -->
+    <div id="brand">
+      <img id="logo" src="logo_raw.png" alt="Z@ki OpenLine">
+      <h1 id="title">《 Z@ki OpenLine 》</h1>
 
-  </div>
-
-  <!-- AUTO-DETECT BANNER (shown only on PS4) -->
-  <div id="detect-banner" role="status" aria-live="polite">
-    <div class="detect-icon">🎮</div>
-    <div class="detect-text">
-      <strong id="detect-title">PS4 Detected — Firmware X.XX</strong>
-      <span id="detect-subtitle">Redirecting you to the correct host automatically…</span>
-    </div>
-    <div class="detect-actions">
-      <div id="countdown-ring">
-        <svg width="44" height="44" viewBox="0 0 44 44">
-          <circle class="bg" cx="22" cy="22" r="18" />
-          <circle class="progress" id="ring-progress" cx="22" cy="22" r="18" />
-        </svg>
-        <div id="countdown-num">5</div>
+      <div id="fwBadge">
+        <div id="fwValue">--.--</div>
+        <div id="fwStatus">DETECTING</div>
       </div>
-      <button id="btn-cancel-redirect">Cancel</button>
-    </div>
-  </div>
 
-  <div class="container">
-    <div class="header-section">
-      <h1 class="main-title">Zaki OpenLine Host Selector</h1>
-      <p class="subtitle">Best Offline PS4 Hosts — Powered by Zaki OpenLine</p>
-      <p class="description">Select your PlayStation 4 firmware version to get started with your host</p>
+      <div id="subtitle">PS4 Offline Host &middot; edited by Houssam Lovy</div>
     </div>
 
-    <div class="version-selection">
-      <div class="section-title">Choose Your Firmware Version</div>
+    <main id="panel">
 
-      <div class="version-grid">
-        <div class="version-card fw-505" onclick="selectFirmware('505')" tabindex="0" data-version="505">
-          <div class="version-badge">Firmware</div>
-          <div class="version-title">FW 5.05</div>
-          <div class="version-number">Offline 5.05 Host</div>
-          <div class="version-description">
-            Classic firmware with proven stability and wide compatibility. Ideal for users on older systems.
-          </div>
+      <div id="stateBox">
+        <div id="state">
+          <span id="statusDot"></span>
+          detecting firmware...
         </div>
-
-        <div class="version-card fw-672" onclick="selectFirmware('672')" tabindex="0" data-version="672">
-          <div class="version-badge">Firmware</div>
-          <div class="version-title">FW 6.72</div>
-          <div class="version-number">Offline 6.72 Host</div>
-          <div class="version-description">
-            Middle-ground firmware with enhanced features and solid performance for most games.
-          </div>
-        </div>
-
-        <div class="version-card fw-700" onclick="selectFirmware('700')" tabindex="0" data-version="700">
-          <div class="version-badge">Firmware</div>
-          <div class="version-title">FW 7.xx-8.xx</div>
-          <div class="version-number">Offline PSFree</div>
-          <div class="version-description">
-            Firmware range 7.00–8.52 with PSFree exploit. Wide game compatibility and stable performance.
-          </div>
-        </div>
-
-        <div class="version-card fw-900" onclick="selectFirmware('900')" tabindex="0" data-version="900">
-          <div class="version-badge">Firmware</div>
-          <div class="version-title">FW 9.xx</div>
-          <div class="version-number">Offline PSFree</div>
-          <div class="version-description">
-            Latest supported firmware with access to the newest games and features.
-          </div>
-        </div>
+        <div id="det"></div>
       </div>
-    </div>
-  </div>
 
-  <div class="credits">
-    <div class="credits-line">
-      <span class="credit-label"> By</span>
-      <a href="#" class="Lovy-link">Houssam Lovy</a>
-    </div>
-    <div class="credits-line">
-      <span class="credit-label">Facebook:</span>
-      <a href="https://www.facebook.com/ZakiOpenLine" class="credit-link">Zaki OpenLine</a>
-      <span style="margin: 0 1rem;">•</span>
-      <span class="credit-label">Instagram:</span>
-      <a href="https://www.instagram.com/zakiopenline" class="credit-link">Zaki OpenLine</a>
-    </div>
+      <div class="infoRow">
+        <span class="infoLabel">Exploit Chain</span>
+        <span class="infoValue" id="chainValue">Detecting...</span>
+      </div>
+
+      <div class="infoRow">
+        <span class="infoLabel">Host Mode</span>
+        <span class="infoValue ok">LOCAL / OFFLINE</span>
+      </div>
+
+      <div class="infoRow">
+        <span class="infoLabel">Payload</span>
+        <span class="infoValue ok">GoldHEN (auto)</span>
+      </div>
+
+      <div id="cacheBox">
+        <span id="cache">Checking application cache...</span>
+      </div>
+
+    </main>
+
+    <div id="footer">《 Z@ki OpenLine 》 &middot; Local PS4 Host edited by Houssam Lovy</div>
   </div>
 
   <script>
-    /* ─────────────────────────────────────────────
-       AUTO FIRMWARE DETECTION
-       The PS4 browser includes "PlayStation 4/X.XX"
-       in the User-Agent string, e.g.:
-         Mozilla/5.0 ... PlayStation 4/9.00
-       We parse that, map it to a host, highlight the
-       card, and start a 5-second countdown redirect.
-    ───────────────────────────────────────────── */
+  (function () {
+    var stateEl     = document.getElementById("state");
+    var detEl       = document.getElementById("det");
+    var cacheEl     = document.getElementById("cache");
+    var fwValue     = document.getElementById("fwValue");
+    var fwStatus    = document.getElementById("fwStatus");
+    var chainValue  = document.getElementById("chainValue");
+    var statusDotEl = document.getElementById("statusDot");
 
-    (function () {
-      var COUNTDOWN_SEC = 3;
-      var CIRCUMFERENCE = 2 * Math.PI * 18; // ≈ 113.1
+    function setState(t, c) {
+      stateEl.innerHTML = '<span id="statusDot"></span>' + t;
+      stateEl.className = c || "";
+    }
+    function setCache(t, ok) {
+      cacheEl.textContent = t;
+      cacheEl.className   = ok ? "cacheok" : "";
+    }
 
-      /* Map detected firmware version → host key */
-      function fwToHostKey(major, minor) {
-        if (major === 5 && minor === 5) return '505';
-        if (major === 6 && minor === 72) return '672';
-        if (major === 7 || (major === 8 && minor <= 52)) return '700';
-        if (major === 9) return '900';
-        return null;
+    /* ── Firmware detection ──────────────────────── */
+    var params = new URLSearchParams(location.search);
+    var key = null, fwnum = null;
+
+    var m = /PlayStation\s+4[\/ ](\d+)\.(\d+)/.exec(navigator.userAgent);
+    if (m) {
+      var minor = parseInt(m[2], 16);
+      var ms    = minor.toString(16);
+      if (ms.length < 2) ms = "0" + ms;
+      key   = m[1] + "." + ms;
+      fwnum = parseInt(m[1], 10) * 100 + parseInt(ms, 10);
+    }
+
+    /* ── Supported firmware tables ───────────────── */
+    // FW below 9.00 is not supported by this host
+    var PSFREE   = {900:1, 903:1, 904:1, 950:1, 951:1, 960:1};          // PSFree    9.00-9.60
+    var CSSKERN  = {1000:1, 1001:1, 1050:1, 1051:1};                    // CSSKern  10.00-10.50
+    var LAPSE    = {1100:1, 1150:1, 1152:1, 1200:1, 1202:1};            // Lapse   11.00-12.02
+    var POOPS    = {1250:1, 1252:1, 1300:1};                             // Poops   12.50-13.00
+    var SLOP     = {1302:1, 1304:1, 1350:1, 1352:1};                    // Slop    13.02-13.52
+
+    /* ── Chain selection ─────────────────────────── */
+    var chain = null, chainName = "NONE", why = "";
+    var forced = params.get("bug");
+
+    if (forced === "psfree" || forced === "css" || forced === "lapse" || forced === "poops" || forced === "slop") {
+      chain     = forced;
+      chainName = forced.toUpperCase();
+      why       = "forced via ?bug=" + forced;
+    } else if (!key) {
+      why = "user-agent is not a PlayStation 4";
+    } else if (fwnum < 900) {
+      why = key + " — firmware too old (minimum 9.00)";
+    } else if (PSFREE[fwnum]) {
+      chain = "psfree"; chainName = "PSFREE";
+      why   = key + " → PSFree exploit";
+    } else if (CSSKERN[fwnum]) {
+      chain = "css"; chainName = "CSSKERN";
+      why   = key + " → CSSFontFace exploit";
+    } else if (LAPSE[fwnum]) {
+      chain = "lapse"; chainName = "LAPSE";
+      why   = key + " → Lapse exploit";
+    } else if (POOPS[fwnum]) {
+      chain = "poops"; chainName = "POOPS";
+      why   = key + " → Poops exploit";
+    } else if (SLOP[fwnum]) {
+      chain = "slop"; chainName = "SLOP";
+      why   = key + " → SlopKit exploit";
+    } else {
+      why = key + " — no exploit available for this firmware";
+    }
+
+    /* ── Display ─────────────────────────────────── */
+    fwValue.textContent    = key || "--.--";
+    chainValue.textContent = chain ? chainName : "UNSUPPORTED";
+
+    detEl.innerHTML =
+      "Firmware <b>" + (key || "unknown") + "</b> &middot; " +
+      (chain ? "Chain <b>" + chainName + "</b> &middot; " : "") + why;
+
+    /* ── Unsupported ─────────────────────────────── */
+    if (!chain) {
+      fwStatus.textContent         = "UNSUPPORTED";
+      fwStatus.style.color         = "var(--red)";
+      fwStatus.style.borderColor   = "rgba(225,125,120,.2)";
+      fwStatus.style.background    = "rgba(225,125,120,.07)";
+      chainValue.style.color       = "var(--red)";
+      setState("UNSUPPORTED FIRMWARE", "bad");
+      return;
+    }
+
+    /* ── Supported ───────────────────────────────── */
+    fwStatus.textContent = "SUPPORTED";
+
+    var TARGET_MAP = {
+      psfree: "run_psfree.html",
+      css:    "css/run_css.html",
+      lapse:  "run_lapse.html",
+      poops:  "run_poops.html",
+      slop:   "run_slop.html"
+    };
+    var target = TARGET_MAP[chain] + location.search;
+
+    function go() {
+      setState("loading " + chainName + " chain...", "warn");
+      location.replace(target);
+    }
+
+    function waitForTap(msg, action) {
+      setState(msg, "warn");
+      var done = false;
+      function fire() {
+        if (done) return;
+        done = true;
+        window.removeEventListener("click",   fire);
+        window.removeEventListener("keydown", fire);
+        action();
       }
+      window.addEventListener("click",   fire);
+      window.addEventListener("keydown", fire);
+      window.setTimeout(fire, 2000);   // auto-fire after 2 s
+    }
 
-      /* Human-readable label for the firmware range */
-      function fwLabel(hostKey, rawVer) {
-        var labels = {
-          '505': 'FW 5.05',
-          '672': 'FW 6.72',
-          '700': 'FW 7.xx – 8.xx',
-          '900': 'FW ' + rawVer  /* Show exact version for 9.xx and above */
-        };
-        return labels[hostKey] || ('FW ' + rawVer);
-      }
+    /* ── Application Cache ───────────────────────── */
+    var ac = window.applicationCache;
 
-      /* Parse User-Agent */
-      function detectPS4Firmware() {
-        var ua = navigator.userAgent || '';
-        var match = ua.match(/PlayStation 4\/(\d+)\.(\d+)/i);
-        if (!match) return null;
-        return {
-          raw: match[1] + '.' + match[2],
-          major: parseInt(match[1], 10),
-          minor: parseInt(match[2], 10)
-        };
-      }
+    if (!ac || !document.documentElement.hasAttribute("manifest")) {
+      setCache("application cache unavailable");
+      setState("READY", "ok");
+      go();
 
-      var fw = detectPS4Firmware();
-      if (!fw) return; // not on a PS4 — nothing to do
+    } else if (!navigator.onLine) {
+      setCache("offline — loading from cache", true);
+      setState("READY", "ok");
+      go();
 
-      var hostKey = fwToHostKey(fw.major, fw.minor);
-      if (!hostKey) return; // unsupported firmware — let user choose manually
-
-      /* ── Highlight the matching card ── */
-      var card = document.querySelector('[data-version="' + hostKey + '"]');
-      if (card) {
-        card.classList.add('is-recommended');
-        var badge = document.createElement('span');
-        badge.className = 'recommended-badge';
-        badge.textContent = '✓ Your FW';
-        card.appendChild(badge);
-        /* Scroll card into view (useful on mobile) */
-        setTimeout(function () {
-          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 300);
-      }
-
-      /* ── Show detection banner ── */
-      var banner = document.getElementById('detect-banner');
-      var titleEl = document.getElementById('detect-title');
-      var subEl = document.getElementById('detect-subtitle');
-      var numEl = document.getElementById('countdown-num');
-      var ringEl = document.getElementById('ring-progress');
-      var cancelBtn = document.getElementById('btn-cancel-redirect');
-
-      titleEl.textContent = '🎮 PS4 Detected — ' + fwLabel(hostKey, fw.raw);
-      subEl.textContent = 'Redirecting to the correct host in ' + COUNTDOWN_SEC + 's…';
-
-      /* Set initial ring */
-      ringEl.style.strokeDasharray = CIRCUMFERENCE;
-      ringEl.style.strokeDashoffset = '0';
-
-      banner.classList.add('visible');
-
-      /* ── Countdown logic ── */
-      var remaining = COUNTDOWN_SEC;
-      var cancelled = false;
-      var timer;
-
-      function tick() {
-        remaining -= 1;
-        numEl.textContent = remaining;
-        /* Drain the ring clockwise */
-        var offset = CIRCUMFERENCE * (1 - remaining / COUNTDOWN_SEC);
-        ringEl.style.strokeDashoffset = offset;
-
-        if (remaining <= 0) {
-          clearInterval(timer);
-          if (!cancelled) {
-            selectFirmware(hostKey);
-          }
+    } else if (ac.status === ac.IDLE) {
+      setCache("cached — verifying...");
+      setTimeout(function () {
+        if (ac.status === ac.CHECKING || ac.status === ac.DOWNLOADING) {
+          setCache("update found — downloading...");
+          waitForDownload();
+        } else if (ac.status === ac.UPDATEREADY) {
+          try { ac.swapCache(); } catch (e) {}
+          setCache("update downloaded", true);
+          waitForTap("UPDATE READY — tap or press X to reload",
+            function () { location.reload(); });
+        } else {
+          setCache("cached — offline ready", true);
+          setState("READY", "ok");
+          go();
         }
-      }
+      }, 3000);
 
-      timer = setInterval(tick, 1000);
+    } else if (ac.status === ac.UPDATEREADY) {
+      try { ac.swapCache(); } catch (e) {}
+      setCache("update downloaded", true);
+      waitForTap("UPDATE READY — tap or press X to reload",
+        function () { location.reload(); });
 
-      cancelBtn.addEventListener('click', function () {
-        cancelled = true;
-        clearInterval(timer);
-        banner.classList.add('cancelled');
-        titleEl.textContent = 'Auto-redirect cancelled';
-        subEl.textContent = 'Your PS4 is running ' + fwLabel(hostKey, fw.raw) + '. Select a host below.';
-        /* Hide countdown ring & button */
-        document.getElementById('countdown-ring').style.display = 'none';
-        cancelBtn.style.display = 'none';
-      });
-    })();
-
-    /* ─────────────────────────────────────────────
-       NAVIGATION
-    ───────────────────────────────────────────── */
-    function selectFirmware(fw) {
-      switch (fw) {
-        case '505': window.location.href = '505/index.html'; break;
-        case '672': window.location.href = '672/index.html'; break;
-        case '700': window.location.href = '700/version-selector.html'; break;
-        case '900': window.location.href = '900/version-selector.html'; break;
-      }
+    } else {
+      waitForDownload();
     }
 
-    /* ── PS4 D-pad / keyboard nav ── */
-    var currentFocus = -1;
-    var cards = document.querySelectorAll('.version-card');
+    function waitForDownload() {
+      setCache("checking application cache...");
 
-    for (var i = 0; i < cards.length; i++) {
-      (function (index) {
-        cards[index].addEventListener('focus', function () { currentFocus = index; });
-        cards[index].addEventListener('keydown', function (e) {
-          if (e.key === 'Enter' || e.keyCode === 13 || e.key === ' ' || e.keyCode === 32) {
-            e.preventDefault();
-            this.click();
-          }
-        });
-      })(i);
+      ac.addEventListener("downloading", function () {
+        setCache("caching files for offline use (first run)...");
+      }, false);
+
+      ac.addEventListener("progress", function (e) {
+        if (e && e.total)
+          setCache("caching " + Math.round((e.loaded / e.total) * 100) + "%");
+      }, false);
+
+      ac.addEventListener("cached", function () {
+        setCache("all files cached — offline ready", true);
+        setState("READY", "ok");
+        waitForTap("CACHED — tap or press X to launch", go);
+      }, false);
+
+      ac.addEventListener("updateready", function () {
+        try { ac.swapCache(); } catch (e) {}
+        setCache("update downloaded", true);
+        waitForTap("UPDATE READY — tap or press X to reload",
+          function () { location.reload(); });
+      }, false);
+
+      ac.addEventListener("noupdate", function () {
+        setCache("cached — offline ready", true);
+        setState("READY", "ok");
+        go();
+      }, false);
+
+      ac.addEventListener("error", function () {
+        setCache("cache unavailable");
+        waitForTap("CACHE FAILED — tap or press X to run anyway", go);
+      }, false);
+
+      ac.addEventListener("obsolete", function () {
+        setCache("cache obsolete");
+        waitForTap("CACHE OBSOLETE — tap or press X to run", go);
+      }, false);
     }
 
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.keyCode === 13 || e.key === ' ' || e.keyCode === 32) {
-        if (currentFocus >= 0 && currentFocus < cards.length) {
-          e.preventDefault();
-          cards[currentFocus].click();
-        }
-      }
-    });
-
-    /* ── Click animations ── */
-    for (var j = 0; j < cards.length; j++) {
-      (function (card) {
-        card.addEventListener('mousedown', function () { this.style.transform = 'translateY(-2px) scale(0.98)'; });
-        card.addEventListener('mouseup', function () { this.style.transform = 'translateY(-5px) scale(1)'; });
-        card.addEventListener('mouseleave', function () { this.style.transform = 'translateY(0px) scale(1)'; });
-        card.addEventListener('blur', function () { this.style.transform = 'translateY(0px) scale(1)'; });
-      })(cards[j]);
-    }
+  })();
   </script>
 </body>
-
 </html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" manifest="cache.appcache">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>《 Z@ki OpenLine 》 — SlopKit chain</title>
+  <style>
+    :root {
+      --bg:             #07090c;
+      --panel:          rgba(14,18,24,.9);
+      --border:         rgba(255,255,255,.07);
+      --text:           #edf1f6;
+      --muted:          #7f8996;
+      --green:          #69e59a;
+      --yellow:         #e4c66f;
+      --red:            #e17d78;
+      --console:        #060a0e;
+      --console-border: #1a2230;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% -15%, rgba(70,110,255,.12), transparent 45%), radial-gradient(circle at 5% 90%, rgba(50,210,130,.055), transparent 35%), var(--bg); color: var(--text); font: 15px/1.45 "Segoe UI", system-ui, sans-serif; }
+    body { height: 100vh; padding: 14px 18px; overflow: hidden; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+    #app { width: min(980px, 100%); height: 100%; margin: 0 auto; display: flex; flex-direction: column; }
+    #brand { display: flex; align-items: center; gap: 14px; padding: 0 0 12px; flex: 0 0 auto; }
+    #brand img { width: 110px; height: 110px; object-fit: cover; border-radius: 20px; border: 1px solid rgba(255,255,255,.13); box-shadow: 0 6px 22px rgba(0,0,0,.44); flex: 0 0 auto; }
+    #brandText { flex: 1; min-width: 0; }
+    #brandTitle { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: .05em; white-space: nowrap; }
+    #brandSub { margin-top: 3px; margin-left: 4px; color: var(--muted); font-size: 13px; letter-spacing: .07em; }
+    #fwWrap { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; padding: 8px 20px; border-radius: 16px; background: rgba(105,229,154,.065); border: 1px solid rgba(105,229,154,.24); box-shadow: 0 0 22px rgba(105,229,154,.16), 0 0 44px rgba(105,229,154,.06), inset 0 1px 0 rgba(105,229,154,.12); }
+    .fw-lbl { font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+    #firmware { font-size: 26px; font-weight: 900; color: var(--green); text-shadow: 0 0 14px rgba(105,229,154,.8), 0 0 30px rgba(105,229,154,.35); letter-spacing: .06em; line-height: 1; }
+    #panel { display: flex; flex-direction: column; overflow: hidden; flex: 1 1 auto; min-height: 0; background: var(--panel); border: 1px solid var(--border); border-radius: 18px; box-shadow: 0 25px 80px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.022); backdrop-filter: blur(14px); }
+    #statusBar { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,.015); flex: 0 0 auto; transition: background .45s, border-color .45s, box-shadow .45s; }
+    #statusBar.status-ok  { background: linear-gradient(135deg, rgba(28,155,76,.30) 0%, rgba(45,195,105,.16) 100%); border-bottom-color: rgba(105,229,154,.48); box-shadow: 0 4px 32px rgba(105,229,154,.18); }
+    #statusBar.status-bad { background: linear-gradient(135deg, rgba(175,38,38,.30) 0%, rgba(215,58,58,.16) 100%); border-bottom-color: rgba(225,125,120,.48); box-shadow: 0 4px 32px rgba(225,125,120,.18); }
+    /* ── PARTIAL — jailbroken but kpatch/GoldHEN failed ──── */
+    #statusBar.status-warn { background: linear-gradient(135deg, rgba(140,100,10,.32) 0%, rgba(200,155,20,.16) 100%); border-bottom-color: rgba(228,198,111,.48); box-shadow: 0 4px 32px rgba(228,198,111,.18); }
+    #statusBar.status-warn #statusDot { background: var(--yellow); box-shadow: 0 0 10px rgba(228,198,111,.95), 0 0 24px rgba(228,198,111,.45); }
+    #statusBar.status-warn #state { color: var(--yellow); }
+    #stateWrap { display: flex; align-items: center; gap: 10px; min-width: 0; overflow: hidden; }
+    #statusDot { width: 10px; height: 10px; flex: 0 0 auto; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 12px rgba(228,198,111,.55); transition: background .45s, box-shadow .45s; }
+    #statusBar.status-ok  #statusDot { background: var(--green); box-shadow: 0 0 10px rgba(105,229,154,.95), 0 0 24px rgba(105,229,154,.45); }
+    #statusBar.status-bad #statusDot { background: var(--red);   box-shadow: 0 0 10px rgba(225,125,120,.95), 0 0 24px rgba(225,125,120,.45); }
+    #state { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .35s; }
+    #statusBar.status-ok  #state { color: var(--green); }
+    #statusBar.status-bad #state { color: var(--red); }
+    #chainBadge { padding: 5px 13px; border-radius: 999px; color: var(--green); background: rgba(105,229,154,.07); border: 1px solid rgba(105,229,154,.18); font-size: 11px; font-weight: 700; letter-spacing: .14em; flex: 0 0 auto; }
+    #consoleHeader { display: flex; align-items: center; justify-content: space-between; padding: 7px 14px; background: #0b0f14; border-bottom: 1px solid var(--console-border); flex: 0 0 auto; }
+    #consoleTitle  { color: #8a96a3; font: 11px/1 Consolas, "Courier New", monospace; letter-spacing: .07em; }
+    #consoleStatus { color: #444f5c; font: 10px/1 Consolas, "Courier New", monospace; }
+    #console { position: relative; padding: 10px; background: var(--console); flex: 1 1 auto; min-height: 0; }
+    #out { height: 100%; min-height: 0; white-space: pre-wrap; word-break: break-word; font: 12px/1.5 Consolas, "Courier New", monospace; color: #00ff00; background: linear-gradient(rgba(255,255,255,.009) 1px, transparent 1px); background-size: 100% 3px; border: 1px solid var(--console-border); border-radius: 10px; padding: 12px 14px; overflow-y: auto; box-shadow: inset 0 0 35px rgba(0,0,0,.38); }
+    #out::-webkit-scrollbar { width: 6px; }
+    #out::-webkit-scrollbar-track { background: transparent; }
+    #out::-webkit-scrollbar-thumb { background: #22303e; border-radius: 10px; }
+    #footer { text-align: center; padding: 8px 0 0; color: #3e4c59; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; flex: 0 0 auto; }
+    .ok { color: var(--green); } .bad { color: var(--red); } .warn { color: var(--yellow); }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <header id="brand">
+      <img src="logo_raw.png" alt="Z@ki OpenLine">
+      <div id="brandText">
+        <h1 id="brandTitle">《 Z@ki OpenLine 》</h1>
+        <div id="brandSub">PS4 SlopKit Exploit Host &nbsp;&middot;&nbsp; by Houssam Lovy</div>
+      </div>
+      <div id="fwWrap">
+        <span class="fw-lbl">PS4 FW</span>
+        <span id="firmware">--.--</span>
+      </div>
+    </header>
+
+    <main id="panel">
+      <div id="statusBar">
+        <div id="stateWrap">
+          <span id="statusDot"></span>
+          <div id="state">loading slopkit chain...</div>
+        </div>
+        <div id="chainBadge">SLOP</div>
+      </div>
+
+      <div id="consoleHeader">
+        <div id="consoleTitle">Z@ki // SLOP chain — GoldHEN auto-load</div>
+        <div id="consoleStatus">LIVE</div>
+      </div>
+
+      <div id="console">
+        <div id="out"></div>
+      </div>
+    </main>
+
+    <footer id="footer">《 Z@ki OpenLine 》 &middot; Local PS4 Host edited by Houssam Lovy</footer>
+  </div>
+
+
+  <!-- jb.js requires ?log=1 to write to the DOM — enforce it here -->
+  <script>
+  (function() {
+    if (location.search.indexOf('log=') === -1) {
+      var sep = location.search ? '&' : '?';
+      location.replace(location.pathname + location.search + sep + 'log=1');
+    }
+  })();
+  </script>
+
+  <script type="module">
+    const statusBar = document.getElementById("statusBar");
+    const output    = document.getElementById("out");
+    const state     = document.getElementById("state");
+    const firmware  = document.getElementById("firmware");
+
+    const m = /PlayStation\s+4[\/ ](\d+)\.(\d+)/.exec(navigator.userAgent);
+    if (m) {
+      const minor = parseInt(m[2], 16);
+      firmware.textContent = m[1] + "." + minor.toString(16).padStart(2, "0");
+    }
+
+    function updateStatusBar() {
+      const log = output.textContent;
+      const st  = state.textContent;
+      const verdictMatch = /EG-VERDICT[^\n]*/i.exec(log);
+      const verdict = verdictMatch ? verdictMatch[0] : "";
+
+      // Full success — GoldHEN running
+      const payloadOk  = /\bpayload_running\s*=\s*1\b/i.test(verdict) || /PROOF-OK\s+PAYLOAD-RUNNING\b/i.test(log);
+
+      // Run finished marker (jb.js prints this at the very end)
+      const runDone    = /PROOF-SUMMARY-FINAL/.test(log);
+
+      // Partial: code exec achieved but kpatch/payload failed
+      const jailbroken = /\bjailbroken\s*=\s*1\b/i.test(verdict);
+      const kpatched   = /\bkpatched\s*=\s*1\b/i.test(verdict);
+
+      // Hard failure: exception thrown
+      const threw      = /\bthrew\b|FAILED|REBOOT REQUIRED/i.test(log + " " + st);
+
+      if (payloadOk) {
+        statusBar.classList.add("status-ok");
+        statusBar.classList.remove("status-bad", "status-warn");
+        // jb.js may not update #state when payload fires — force it
+        if (/running.the.primitive/i.test(st)) {
+          state.textContent = "JAILBROKEN — GoldHEN loaded!";
+        }
+
+      } else if (runDone && jailbroken) {
+        // Jailbroken but kpatch failed — warn, not red; advise reboot
+        statusBar.classList.add("status-warn");
+        statusBar.classList.remove("status-ok", "status-bad");
+        state.textContent = kpatched
+          ? "Kernel patched, but GoldHEN did not start — reboot PS4 before retry"
+          : "Jailbreak reached, but kernel patch failed — reboot PS4 before retry";
+        state.style.color = "var(--yellow)";
+
+      } else if (runDone) {
+        statusBar.classList.add("status-bad");
+        statusBar.classList.remove("status-ok", "status-warn");
+        state.textContent = "Exploit did not complete — see log; reboot before retry";
+
+      } else if (threw) {
+        statusBar.classList.add("status-bad");
+        statusBar.classList.remove("status-ok", "status-warn");
+      }
+    }
+
+    new MutationObserver(updateStatusBar).observe(output, { childList:true, subtree:true, characterData:true });
+    new MutationObserver(updateStatusBar).observe(state,  { childList:true, characterData:true });
+
+    // SlopKit chain — report cached-module failures in the console.
+    import("./slop/jb.js").catch((error) => {
+      const message = error && error.message ? error.message : String(error);
+      output.textContent += "MODULE-LOAD-FAILED " + message;
+      state.textContent = "Exploit module failed to load — refresh cache and retry";
+      statusBar.classList.add("status-bad");
+      statusBar.classList.remove("status-ok", "status-warn");
+    });
+  </script>
+
+  <script>
+  // ── Auto-reload watchdog (max 2 retries on heap-layout miss) ──────────────
+  // Mirrors the logic in psx8's 1352/jb.html to recover from attempt-ceiling.
+  (function () {
+    var KEY        = "zaki-slop-reloads";
+    var MAX        = 2;
+    var WINDOW_MS  = 10 * 60 * 1000;
+    var handled    = false;
+
+    function readBudget() {
+      var rec = null;
+      try { rec = JSON.parse(sessionStorage.getItem(KEY) || "null"); } catch (e) { rec = null; }
+      var now = Date.now();
+      if (!rec || typeof rec.n !== "number" || (now - rec.t) > WINDOW_MS) return { n: 0, t: now };
+      return rec;
+    }
+
+    function spendBudget() {
+      var rec = readBudget();
+      rec.n++;
+      rec.t = Date.now();
+      try {
+        sessionStorage.setItem(KEY, JSON.stringify(rec));
+        var check = JSON.parse(sessionStorage.getItem(KEY) || "null");
+        if (check && check.n === rec.n) return rec;
+      } catch (e) {}
+      return null;
+    }
+
+    function successSeen(txt) {
+      var lines = txt.split("\n");
+      for (var i = lines.length - 1; i >= 0; i--) {
+        if (lines[i].indexOf("PAYLOAD-RUNNING") !== -1)
+          return lines[i].indexOf("PROOF-OK") === 0;
+      }
+      return false;
+    }
+
+    setInterval(function () {
+      try {
+        if (handled) return;
+        var st  = document.getElementById("state");
+        var out = document.getElementById("out");
+        var txt = out ? out.textContent : "";
+        if (successSeen(txt)) {
+          try { sessionStorage.removeItem(KEY); } catch (e) {}
+          handled = true;
+          return;
+        }
+        if (!st || st.textContent !== "threw") return;
+        if (txt.indexOf("attempt-ceiling") === -1) return;
+        handled = true;
+        var rec = spendBudget();
+        if (!rec || rec.n > MAX) return;
+        st.textContent = "heap layout miss — reloading for fresh heap (" + rec.n + "/2)...";
+        st.className   = "warn";
+        setTimeout(function () { location.reload(); }, 2000);
+      } catch (e) { /* never break the exploit page */ }
+    }, 3000);
+  })();
+  </script>
+</body>
+</html>
