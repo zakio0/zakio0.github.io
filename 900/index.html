@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" manifest="PSPulse.manifest">
 
 <head>
     <link rel="icon" type="image/png" href="../pspulse.png">
@@ -182,9 +182,14 @@
         }
     </style>
     <script>
-        if (window.applicationCache.status == '0') {
-            window.location.replace("version-selector.html");
-        }
+        /* Swap to new cache files when an update is ready. */
+        (function () {
+            var ac = window.applicationCache;
+            if (!ac) return;
+            ac.addEventListener('updateready', function () {
+                try { ac.swapCache(); } catch (e) {}
+            }, false);
+        }());
     </script>
     <script defer src="payloads.js"></script>
     <script defer src="loader.js"></script>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" manifest="cache.appcache">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PSPULSE // FW 11.50-14.00</title>
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --line: #1e2732;
+      --dim: #4d5765;
+      --fg: #c8ced8;
+      --accent: #a294ff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--bg);
+      color: var(--fg);
+      font: 14px/1.5 Consolas, "Liberation Mono", monospace;
+      min-height: 100%;
+    }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    #status { text-align: center; }
+    #line1 { color: var(--accent); font-size: 16px; letter-spacing: .05em; }
+    #line2 { color: var(--dim); font-size: 13px; margin-top: 8px; min-height: 1.5em; }
+  </style>
+</head>
+<body>
+  <div id="status">
+    <div id="line1">[ ok ] firmware detected</div>
+    <div id="line2"></div>
+  </div>
+
+  <script>
+    /* Navigate to the exploit page. Using location.href (not replace) so that
+       the browser sets the Referrer header that jb.js checks before arming. */
+    var DEST = 'jb.html?log=1&afterglow=run&mode=goldhen';
+    var line2 = document.getElementById('line2');
+    var redirected = false;
+
+    function go() {
+      if (redirected) return;
+      redirected = true;
+      line2.textContent = 'loading exploit...';
+      window.location.href = DEST;
+    }
+
+    var appCache = null;
+    try { appCache = window.applicationCache; } catch (e) {}
+
+    if (!appCache) {
+      /* No AppCache support (desktop browsers) — go straight through. */
+      go();
+    } else {
+      /* Watchdog: if the cache events never fire (network timeout, etc.)
+         proceed anyway after 90 s — the server will serve the files directly. */
+      var watchdog = setTimeout(function () { if (!redirected) go(); }, 90000);
+
+      function clearWd() { clearTimeout(watchdog); }
+
+      function isBusy() {
+        try { return appCache.status === appCache.CHECKING || appCache.status === appCache.DOWNLOADING; }
+        catch (e) { return false; }
+      }
+
+      /* Fresh install: browser fires cached → reload once so all modules load
+         from the AppCache storage, then the reload hits IDLE and go() fires. */
+      function onCached() {
+        if (redirected) return;
+        clearWd();
+        line2.textContent = 'cache ready — reloading...';
+        setTimeout(function () { window.location.reload(); }, 500);
+      }
+
+      /* Update: swap to new files and reload, same logic. */
+      function onUpdate() {
+        if (redirected) return;
+        clearWd();
+        try { appCache.swapCache(); } catch (e) {}
+        line2.textContent = 'cache updated — reloading...';
+        setTimeout(function () { window.location.reload(); }, 500);
+      }
+
+      /* Already current or failed — either way, proceed. */
+      function onReady() { clearWd(); go(); }
+
+      function onError() {
+        clearWd();
+        /* If IDLE/UPDATEREADY the files are already on disk: go. */
+        try {
+          if (appCache.status === appCache.IDLE || appCache.status === appCache.UPDATEREADY) {
+            go(); return;
+          }
+        } catch (e) {}
+        /* Manifest fetch failed but we might be offline with a valid cache;
+           try to go — if the files aren't there the server will answer. */
+        go();
+      }
+
+      appCache.addEventListener('noupdate',    onReady,  false);
+      appCache.addEventListener('cached',      onCached, false);
+      appCache.addEventListener('updateready', onUpdate, false);
+      appCache.addEventListener('error',       onError,  false);
+      appCache.addEventListener('obsolete',    onError,  false);
+      appCache.addEventListener('progress', function (e) {
+        if (redirected) return;
+        if (e && e.total > 0)
+          line2.textContent = 'caching ' + Math.round(e.loaded / e.total * 100) + '%';
+        else
+          line2.textContent = 'caching files...';
+      }, false);
+      appCache.addEventListener('downloading', function () {
+        if (!redirected) line2.textContent = 'caching files...';
+      }, false);
+
+      /* Synchronous state check — the common fast-path after the first visit. */
+      try {
+        var s = appCache.status;
+        if (s === appCache.IDLE) {
+          clearWd(); go();
+        } else if (s === appCache.UPDATEREADY) {
+          clearWd(); onUpdate();
+        } else if (s === appCache.UNCACHED || s === appCache.CHECKING || s === appCache.DOWNLOADING) {
+          line2.textContent = 'caching files...';
+          /* Events will fire and call onCached / onReady / onError. */
+        } else {
+          clearWd(); go();
+        }
+      } catch (e) {
+        clearWd(); go();
+      }
+    }
+  </script>
+</body>
+</html>
