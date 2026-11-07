@@ -1,6 +1,6 @@
 CACHE MANIFEST
 # generated; do not edit by hand
-# goldhen b18.12 (39452f5e) auto-detect-20261107
+# goldhen b18.13 (39452f5e) auto-detect-20261107
 includes/script.js #5d880cf6e317e31b2930f75677988b85ecb34d2465df3c1805558b0d4633de92
 index.html #122d14b987b3bce2776355e2976548f288a6751aa86bf3328a3afd06fc3b0265
 src/lapse.js #8a3841c61ff8219c9b996672da74dbf65a57f5265265d6665c30449a14b4aeae
@@ -33,6 +33,8 @@ src/utils.mjs #a2ef42be3a24e3f0a82613e86b9a70e2592f8f2f68faf2f81f3b4a7e0f2ee27b
 src/worker.js #d7bd66b6737545227dd691b40f465a68da032365cf5703a995f227572fcb27f3
 src/workers.js #199ae642c1c0bdd4e42ebe694ced604f195fc1738eb16c087f33aab03a4cae30
 ../../pspulse.png #61b981553005b6ac2b9456e135a512c9c888fc93fe9606d684edec562fe0caa5
+
+../../logo.png #2313088ebe348b0b34a417f77aa948bf2e6fa30244fb6daf11296881ccec15d4
 
 NETWORK:
 *

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PSPULSE // loading</title>
+  <title>Zaki OpenLine // loading</title>
   <style>
     :root {
       --bg: #151515;
@@ -34,7 +34,7 @@
 </head>
 <body>
   <div id="wrap">
-    <div id="brand">PSPULSE</div>
+    <div id="brand">Zaki <span style="color:var(--accent)">OpenLine</span></div>
     <div id="msg">detecting firmware...</div>
     <div id="sub"></div>
     <div id="err"></div>
@@ -79,7 +79,7 @@
 
       } else if (fw.major === 10 || (fw.major === 11 && fw.minor <= 2)) {
         /* ── FW 10.xx and 11.00–11.02 ── CSSFontFace UAF
-             css/latest/ carries GoldHEN b18.12 and handles its own AppCache. */
+             css/latest/ carries GoldHEN b18.13 and handles its own AppCache. */
         sub.textContent = 'loading 10.xx/11.0x host...';
         redirect('css/latest/index.html');
 

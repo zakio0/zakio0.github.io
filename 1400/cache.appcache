@@ -1,9 +1,10 @@
 CACHE MANIFEST
 # pspulse-1400-v1-20261107
-# GoldHEN b18.12 — afterglow chain — no hen.bin
+# GoldHEN b18.13 — afterglow chain — no hen.bin
 
 CACHE:
 index.html
+../logo.png
 jb.html
 jb.js
 core.js

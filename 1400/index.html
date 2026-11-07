@@ -3,137 +3,145 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PSPULSE // FW 11.50-14.00</title>
+  <title>Zaki OpenLine // FW 11.50–14.00</title>
+  <link rel="icon" type="image/png" href="../logo.png">
   <style>
     :root {
-      --bg: #0b0d10;
-      --line: #1e2732;
-      --dim: #4d5765;
-      --fg: #c8ced8;
-      --accent: #a294ff;
+      --bg: #050508;
+      --panel: #080b10;
+      --line: #1c2e42;
+      --text: #d8e8f4;
+      --muted: #6a86a0;
+      --dim: #384858;
+      --accent: #0098e8;
+      --glow: #00cfff;
+      --glow2: #005a9e;
+      --green: #00df88;
+      --sans: "Segoe UI", system-ui, -apple-system, sans-serif;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      background: var(--bg);
-      color: var(--fg);
-      font: 14px/1.5 Consolas, "Liberation Mono", monospace;
-      min-height: 100%;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: var(--text); font: 15px/1.5 var(--sans); min-height: 100%; }
+    body { align-items: center; display: flex; justify-content: center; min-height: 100vh; }
+
+    .wrap { max-width: 420px; padding: 24px 20px; text-align: center; width: 100%; }
+
+    .zol-logo-img { border-radius: 50%; height: 56px; object-fit: cover; width: 56px; margin-bottom: 10px; }
+    .zol-name { color: #fff; font-size: 20px; font-weight: 700; letter-spacing: .03em; }
+    .zol-name em { color: var(--glow); font-style: normal; }
+    .zol-sub { color: var(--muted); font-size: 11px; letter-spacing: .1em; margin-bottom: 24px; text-transform: uppercase; }
+
+    .fw-badge {
+      color: var(--glow);
+      font: 900 56px/1 var(--sans);
+      letter-spacing: -1px;
+      text-shadow: 0 0 24px var(--accent), 0 0 48px var(--glow2);
+      margin-bottom: 4px;
     }
-    body {
-      display: flex;
+    .fw-label { color: var(--muted); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; margin-bottom: 20px; }
+
+    .status-line {
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--accent);
+      display: flex;
+      gap: 10px;
+      padding: 10px 14px;
+      text-align: left;
+      margin-top: 10px;
     }
-    #status { text-align: center; }
-    #line1 { color: var(--accent); font-size: 16px; letter-spacing: .05em; }
-    #line2 { color: var(--dim); font-size: 13px; margin-top: 8px; min-height: 1.5em; }
+    .status-line .ic { color: var(--accent); flex-shrink: 0; }
+    #line2 { color: var(--muted); font-size: 13px; }
+
+    .prog {
+      background: var(--line);
+      border-radius: 2px;
+      height: 3px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+    .prog-bar {
+      background: linear-gradient(90deg, var(--accent), var(--glow));
+      border-radius: 2px;
+      height: 100%;
+      transition: width .3s;
+      width: 0%;
+    }
   </style>
 </head>
 <body>
-  <div id="status">
-    <div id="line1">[ ok ] firmware detected</div>
-    <div id="line2"></div>
+  <div class="wrap">
+    <img class="zol-logo-img" src="../logo.png" alt="">
+    <div class="zol-name">Zaki <em>OpenLine</em></div>
+    <div class="zol-sub">PS4 Jailbreak Host</div>
+
+    <div class="fw-badge" id="fw-num">—</div>
+    <div class="fw-label">Firmware Detected</div>
+
+    <div class="status-line">
+      <span class="ic">▶</span>
+      <span id="line2">preparing cache...</span>
+    </div>
+    <div class="prog"><div class="prog-bar" id="prog-bar"></div></div>
   </div>
 
   <script>
-    /* Navigate to the exploit page. Using location.href (not replace) so that
-       the browser sets the Referrer header that jb.js checks before arming. */
     var DEST = 'jb.html?log=1&afterglow=run&mode=goldhen';
-    var line2 = document.getElementById('line2');
+    var line2  = document.getElementById('line2');
+    var bar    = document.getElementById('prog-bar');
+    var fwNum  = document.getElementById('fw-num');
     var redirected = false;
+
+    /* Show detected FW in the badge */
+    (function () {
+      var m = navigator.userAgent.match(/PlayStation\s*4[\s\/](\d+\.\d+)/i);
+      if (m) fwNum.textContent = m[1];
+    }());
 
     function go() {
       if (redirected) return;
       redirected = true;
       line2.textContent = 'loading exploit...';
+      bar.style.width = '100%';
       window.location.href = DEST;
     }
 
     var appCache = null;
     try { appCache = window.applicationCache; } catch (e) {}
 
-    if (!appCache) {
-      /* No AppCache support (desktop browsers) — go straight through. */
-      go();
-    } else {
-      /* Watchdog: if the cache events never fire (network timeout, etc.)
-         proceed anyway after 90 s — the server will serve the files directly. */
+    if (!appCache) { go(); }
+    else {
       var watchdog = setTimeout(function () { if (!redirected) go(); }, 90000);
-
       function clearWd() { clearTimeout(watchdog); }
 
-      function isBusy() {
-        try { return appCache.status === appCache.CHECKING || appCache.status === appCache.DOWNLOADING; }
-        catch (e) { return false; }
-      }
-
-      /* Fresh install: browser fires cached → reload once so all modules load
-         from the AppCache storage, then the reload hits IDLE and go() fires. */
-      function onCached() {
-        if (redirected) return;
-        clearWd();
-        line2.textContent = 'cache ready — reloading...';
-        setTimeout(function () { window.location.reload(); }, 500);
-      }
-
-      /* Update: swap to new files and reload, same logic. */
-      function onUpdate() {
-        if (redirected) return;
-        clearWd();
-        try { appCache.swapCache(); } catch (e) {}
-        line2.textContent = 'cache updated — reloading...';
-        setTimeout(function () { window.location.reload(); }, 500);
-      }
-
-      /* Already current or failed — either way, proceed. */
-      function onReady() { clearWd(); go(); }
-
-      function onError() {
-        clearWd();
-        /* If IDLE/UPDATEREADY the files are already on disk: go. */
-        try {
-          if (appCache.status === appCache.IDLE || appCache.status === appCache.UPDATEREADY) {
-            go(); return;
-          }
-        } catch (e) {}
-        /* Manifest fetch failed but we might be offline with a valid cache;
-           try to go — if the files aren't there the server will answer. */
-        go();
-      }
-
-      appCache.addEventListener('noupdate',    onReady,  false);
-      appCache.addEventListener('cached',      onCached, false);
-      appCache.addEventListener('updateready', onUpdate, false);
-      appCache.addEventListener('error',       onError,  false);
-      appCache.addEventListener('obsolete',    onError,  false);
+      appCache.addEventListener('noupdate',    function () { clearWd(); go(); }, false);
+      appCache.addEventListener('cached',      function () { clearWd(); line2.textContent = 'cache ready — loading...'; bar.style.width = '100%'; setTimeout(function () { window.location.reload(); }, 500); }, false);
+      appCache.addEventListener('updateready', function () { clearWd(); try { appCache.swapCache(); } catch (e) {} line2.textContent = 'cache updated — loading...'; bar.style.width = '100%'; setTimeout(function () { window.location.reload(); }, 500); }, false);
+      appCache.addEventListener('error',       function () { clearWd(); go(); }, false);
+      appCache.addEventListener('obsolete',    function () { clearWd(); go(); }, false);
       appCache.addEventListener('progress', function (e) {
         if (redirected) return;
-        if (e && e.total > 0)
-          line2.textContent = 'caching ' + Math.round(e.loaded / e.total * 100) + '%';
-        else
+        if (e && e.total > 0) {
+          var pct = Math.round(e.loaded / e.total * 100);
+          bar.style.width = pct + '%';
+          line2.textContent = 'caching ' + pct + '%';
+        } else {
           line2.textContent = 'caching files...';
+        }
       }, false);
       appCache.addEventListener('downloading', function () {
         if (!redirected) line2.textContent = 'caching files...';
       }, false);
 
-      /* Synchronous state check — the common fast-path after the first visit. */
       try {
         var s = appCache.status;
-        if (s === appCache.IDLE) {
-          clearWd(); go();
-        } else if (s === appCache.UPDATEREADY) {
-          clearWd(); onUpdate();
-        } else if (s === appCache.UNCACHED || s === appCache.CHECKING || s === appCache.DOWNLOADING) {
+        if      (s === appCache.IDLE)         { clearWd(); go(); }
+        else if (s === appCache.UPDATEREADY)  { clearWd(); try { appCache.swapCache(); } catch (e) {} go(); }
+        else if (s === appCache.UNCACHED || s === appCache.CHECKING || s === appCache.DOWNLOADING) {
           line2.textContent = 'caching files...';
-          /* Events will fire and call onCached / onReady / onError. */
-        } else {
-          clearWd(); go();
         }
-      } catch (e) {
-        clearWd(); go();
-      }
+        else { clearWd(); go(); }
+      } catch (e) { clearWd(); go(); }
     }
   </script>
 </body>
