@@ -32,8 +32,11 @@ function goldhen_already() {
     setTimeout(ani2, 4000);
 }
 function load_exploit_done() {
-    setTimeout(function () { showNotice('Jailbreak Success !!! GoldHEN v2.4b18.13 Loaded !!!'); }, 50);
-    setTimeout(ani2, 4000);
+    var log = document.getElementById('log');
+    var notify = document.getElementById('notify');
+    if (log) log.innerHTML = '';
+    if (notify) notify.style.display = 'none';
+    document.body.classList.add('jb-success');
 }
 function LoadFromGHBLS(PLfile) {
     var statusReq = new XMLHttpRequest();

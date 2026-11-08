@@ -82,6 +82,11 @@
             padding: 4px 10px;
         }
         #msgs h1 { color: var(--text) !important; font-size: 17px; font-weight: 400; letter-spacing: normal; line-height: 1.45; margin: 0; }
+        #goldhen-done { align-items: center; background: rgba(0,16,8,.97); border: 3px solid #00df88; display: none; flex-direction: column; justify-content: center; position: fixed; top: 0; right: 0; bottom: 0; left: 0; text-align: center; z-index: 9999; }
+        body.goldhen-done #goldhen-done { display: flex; }
+        #goldhen-done img { height: 320px; object-fit: contain; width: 320px; }
+        #goldhen-done strong { background: #001a0a; border: 3px solid #00df88; border-radius: 8px; bottom: 8%; color: #fff; font: 900 64px/1.2 Arial,sans-serif; left: 5%; letter-spacing: 4px; padding: 18px 24px; position: fixed; text-shadow: 0 0 18px #00df88; width: 90%; }
+        @media (max-height: 700px) { #goldhen-done img { height: 180px; width: 180px; } #goldhen-done strong { font-size: 42px; } }
         .status-meta {
             align-items: center;
             border-top: 1px solid var(--line);
@@ -207,6 +212,7 @@
 </head>
 
 <body>
+    <div id="goldhen-done" role="status" aria-live="assertive"><img src="../logo.png" alt="Zaki OpenLine"><strong>JAILBREAK DONE</strong></div>
     <div class="app">
         <header class="bar">
             <span><b>PSPULSE</b> // ps4 hosts</span>
@@ -420,6 +426,20 @@
             PLfile = "pup-decrypt.bin";
             loadScript1();
         }
+    </script>
+    <script>
+    (function () {
+        var msg = document.getElementById('msgs');
+        if (!msg || !window.MutationObserver) return;
+        var observer = new MutationObserver(function () {
+            var text = msg.textContent || '';
+            if (text.indexOf('GoldHEN') !== -1 && text.indexOf('Loaded') !== -1) {
+                document.body.classList.add('goldhen-done');
+                observer.disconnect();
+            }
+        });
+        observer.observe(msg, { childList: true, subtree: true, characterData: true });
+    }());
     </script>
 
 <!-- PSPulse support link: intentionally lightweight for the PS4 browser. -->

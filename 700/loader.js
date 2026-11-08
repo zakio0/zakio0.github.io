@@ -35,10 +35,11 @@ function goldhen_already(){
 }
 
 function load_exploit_done(){
-    document.getElementById('notify').style.display = ''
-    document.getElementById('notify').className = 'notification'
-    setTimeout(function(){document.getElementById('log').innerHTML ='<h1 style=color:#c5c7ff>Jailbreak Success !!! GoldHEN v2.4b18.12 Loaded !!!</h1>'; }, 50); 
-    setTimeout(ani2, 4000);
+    var log = document.getElementById('log');
+    var notify = document.getElementById('notify');
+    if (log) log.innerHTML = '';
+    if (notify) notify.style.display = 'none';
+    document.body.classList.add('jb-success');
 }
 
 function LoadFromGHBLS(PLfile){

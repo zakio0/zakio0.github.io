@@ -1,13 +1,14 @@
 CACHE MANIFEST
 # resource-path-fix-20261021-main-v2
 # offline-manifests-v1-20261021
-# v4 - startup, AppCache and telemetry reliability 20261003
+# v5 - full-screen jailbreak success view 20261108
 
 CACHE:
 index.html
 jb.html
 cache.html
 ../pspulse.png
+../logo.png
 jb.js
 core.js
 mem.js

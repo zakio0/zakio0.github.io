@@ -127,32 +127,42 @@
 
     /* ── Success block ──────────────────────────────────── */
     #zol-done {
+      align-items: center;
+      background: rgba(0, 16, 8, .97);
+      border: 3px solid var(--green);
       display: none;
       flex-direction: column;
-      align-items: center;
+      inset: 0;
       justify-content: center;
-      margin-top: 14px;
-      padding: 28px 16px;
+      margin: 0;
+      padding: 24px;
+      position: fixed;
       text-align: center;
-      border: 1px solid var(--green);
-      background: rgba(0,180,80,.07);
+      width: 100%;
+      z-index: 9999;
     }
     body.jb-success #zol-done { display: flex; }
     #zol-done .done-ic {
       color: var(--green);
-      font-size: 70px;
+      font-size: 96px;
       line-height: 1;
       text-shadow: 0 0 40px var(--green);
     }
     #zol-done .done-txt {
       color: var(--green);
-      font-size: 32px;
+      font-size: 64px;
       font-weight: 900;
       letter-spacing: 6px;
       margin-top: 10px;
       text-shadow: 0 0 22px var(--green);
     }
+    #zol-done .done-logo { height: 320px; margin-bottom: 18px; object-fit: contain; width: 320px; }
+    #zol-done .done-ver { color: var(--glow); font-size: 16px; letter-spacing: 1px; margin-top: 12px; }
     #zol-done .done-sub { color: var(--muted); font-size: 13px; margin-top: 8px; }
+    @media (max-height: 700px) {
+      #zol-done .done-logo { height: 180px; width: 180px; }
+      #zol-done .done-txt { font-size: 44px; }
+    }
 
     /* ── Payloads ────────────────────────────────────────── */
     .zol-payloads { margin-top: 14px; }
@@ -239,9 +249,11 @@
 
     <!-- Success block — shown by body.jb-success -->
     <div id="zol-done" role="status" aria-live="assertive">
-      <div class="done-ic">✓</div>
-      <div class="done-txt">ALL DONE</div>
-      <div class="done-sub">GoldHEN v2.4b18.13 loaded — payloads available below</div>
+      <img class="done-logo" src="../logo.png" alt="">
+      <div class="done-ic">&#10003;</div>
+      <div class="done-txt">JAILBREAK DONE</div>
+      <div class="done-ver">GoldHEN v2.4b18.13 Loaded</div>
+      <div class="done-sub">Payloads available below &mdash; Zaki OpenLine</div>
     </div>
 
     <div class="zol-payloads">

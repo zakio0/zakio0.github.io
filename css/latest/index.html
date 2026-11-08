@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" manifest="cache.manifest">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,8 +24,21 @@
       --sans: "Segoe UI", system-ui, -apple-system, sans-serif;
       --mono: Consolas, "DejaVu Sans Mono", monospace;
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { background: var(--bg); color: var(--text); font: 15px/1.5 var(--sans); }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.5 var(--sans);
+    }
+
     body {
       background: var(--bg);
       display: flex;
@@ -32,8 +46,14 @@
       min-height: 100vh;
       transition: background .5s;
     }
-    body.jb-success { background: #001a0a; }
-    a { color: var(--accent); }
+
+    body.jb-success {
+      background: #001a0a;
+    }
+
+    a {
+      color: var(--accent);
+    }
 
     .app {
       display: flex;
@@ -53,13 +73,52 @@
       justify-content: space-between;
       padding: 10px 0;
     }
-    .zol-brand { align-items: center; display: flex; gap: 10px; }
-    .zol-logo { border-radius: 50%; height: 44px; object-fit: cover; width: 44px; }
-    .zol-name { color: #fff; font-size: 17px; font-weight: 700; letter-spacing: .03em; line-height: 1.1; }
-    .zol-name em { color: var(--glow); font-style: normal; }
-    .zol-sub { color: var(--muted); font-size: 11px; letter-spacing: .1em; margin-top: 2px; text-transform: uppercase; }
-    .zol-fw { text-align: right; }
-    .zol-fw-lbl { color: var(--muted); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; }
+
+    .zol-brand {
+      align-items: center;
+      display: flex;
+      gap: 10px;
+    }
+
+    .zol-logo {
+      border-radius: 50%;
+      height: 44px;
+      object-fit: cover;
+      width: 44px;
+    }
+
+    .zol-name {
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: .03em;
+      line-height: 1.1;
+    }
+
+    .zol-name em {
+      color: var(--glow);
+      font-style: normal;
+    }
+
+    .zol-sub {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .1em;
+      margin-top: 2px;
+      text-transform: uppercase;
+    }
+
+    .zol-fw {
+      text-align: right;
+    }
+
+    .zol-fw-lbl {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
     .zol-fw-num {
       color: var(--glow);
       font: 900 46px/1 var(--sans);
@@ -75,6 +134,7 @@
       gap: 6px;
       padding: 7px 0;
     }
+
     .pill {
       align-items: center;
       background: var(--panel);
@@ -86,8 +146,18 @@
       gap: 5px;
       padding: 3px 9px;
     }
-    .pill .dot { background: var(--accent); border-radius: 50%; flex-shrink: 0; height: 6px; width: 6px; }
-    .pill .dg  { background: var(--green); }
+
+    .pill .dot {
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+      height: 6px;
+      width: 6px;
+    }
+
+    .pill .dg {
+      background: var(--green);
+    }
 
     /* ── Step ───────────────────────────────────────────── */
     .zol-step {
@@ -101,13 +171,34 @@
       padding: 10px 14px;
       transition: border-left-color .4s;
     }
-    body.jb-success .zol-step { border-left-color: var(--green); }
-    .step-ic { color: var(--accent); flex-shrink: 0; }
-    #autoJbLabel { color: var(--text); font-size: 14px; }
+
+    body.jb-success .zol-step {
+      border-left-color: var(--green);
+    }
+
+    .step-ic {
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    #autoJbLabel {
+      color: var(--text);
+      font-size: 14px;
+    }
 
     /* ── Debug log (#console) ───────────────────────────── */
-    .log-wrap { margin-top: 10px; }
-    .sec-lbl { color: var(--muted); font-size: 11px; letter-spacing: .15em; margin-bottom: 5px; text-transform: uppercase; }
+    .log-wrap {
+      margin-top: 10px;
+    }
+
+    .sec-lbl {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .15em;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
     /* script.js needs: textContent append, scrollTop, overflow:auto, pre-wrap */
     #console {
       background: var(--panel-2);
@@ -123,47 +214,128 @@
     }
 
     /* ── Cache / UA status ──────────────────────────────── */
-    .zol-meta { color: var(--muted); display: flex; flex-wrap: wrap; font-size: 12px; gap: 4px 14px; margin-top: 7px; }
-    #UA  { color: var(--dim); font-size: 11px; overflow-wrap: anywhere; }
-    #cache { color: var(--dim); font-size: 12px; }
-    #cache.cacheok { color: var(--green); }
+    .zol-meta {
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      font-size: 12px;
+      gap: 4px 14px;
+      margin-top: 7px;
+    }
+
+    #UA {
+      color: var(--dim);
+      font-size: 11px;
+      overflow-wrap: anywhere;
+    }
+
+    #cache {
+      color: var(--dim);
+      font-size: 12px;
+    }
+
+    #cache.cacheok {
+      color: var(--green);
+    }
 
     /* ── Success block ──────────────────────────────────── */
     #zol-done {
       align-items: center;
+      background: rgba(0, 16, 8, .97);
+      border: 3px solid var(--green);
       display: none;
+      inset: 0;
       flex-direction: column;
       justify-content: center;
-      margin-top: 14px;
-      padding: 28px 16px;
+      margin: 0;
+      padding: 24px;
+      position: fixed;
       text-align: center;
-      border: 1px solid var(--green);
-      background: rgba(0,180,80,.07);
+      width: 100%;
+      z-index: 9999;
     }
-    body.jb-success #zol-done { display: flex; }
+
+    body.jb-success #zol-done {
+      display: flex;
+    }
+
     .done-ic {
       color: var(--green);
-      font-size: 70px;
+      font-size: 96px;
       line-height: 1;
       text-shadow: 0 0 40px var(--green);
     }
+
     .done-txt {
       color: var(--green);
-      font-size: 32px;
+      font-size: 64px;
       font-weight: 900;
       letter-spacing: 6px;
       margin-top: 10px;
       text-shadow: 0 0 22px var(--green);
     }
-    .done-sub { color: var(--muted); font-size: 13px; margin-top: 8px; }
+
+    .done-logo {
+      height: 320px;
+      margin-bottom: 18px;
+      object-fit: contain;
+      width: 320px;
+    }
+
+    .done-ver {
+      color: var(--green);
+      font-size: 16px;
+      letter-spacing: 1px;
+      margin-top: 12px;
+    }
+
+    .done-sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    @media (max-height: 700px) {
+      .done-logo { height: 180px; width: 180px; }
+      .done-txt { font-size: 44px; }
+    }
 
     /* ── Controls ───────────────────────────────────────── */
-    .zol-controls { border: 1px solid var(--line-h); margin-top: 14px; padding: 14px; }
-    #kernel-options { align-items: center; display: flex; flex-wrap: wrap; gap: 8px 12px; }
-    .chain-label { color: var(--muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
-    .chain-options { display: flex; gap: 6px; }
-    #kernel-options input[type="radio"] { height: 1px; opacity: 0; position: absolute; width: 1px; }
-    .chain-option, #jeilbrek, #reloadBtn, .auto-jb-label {
+    .zol-controls {
+      border: 1px solid var(--line-h);
+      margin-top: 14px;
+      padding: 14px;
+    }
+
+    #kernel-options {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+    }
+
+    .chain-label {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .chain-options {
+      display: flex;
+      gap: 6px;
+    }
+
+    #kernel-options input[type="radio"] {
+      height: 1px;
+      opacity: 0;
+      position: absolute;
+      width: 1px;
+    }
+
+    .chain-option,
+    #jeilbrek,
+    #reloadBtn,
+    .auto-jb-label {
       background: var(--panel);
       border: 1px solid var(--line-h);
       color: var(--text);
@@ -172,33 +344,82 @@
       min-height: 40px;
       padding: 8px 14px;
     }
-    #kernel-options input[type="radio"]:checked + .chain-option,
-    .chain-option:hover, #jeilbrek:hover, #jeilbrek:focus,
-    #reloadBtn:hover, #reloadBtn:focus, .auto-jb-label:hover {
+
+    #kernel-options input[type="radio"]:checked+.chain-option,
+    .chain-option:hover,
+    #jeilbrek:hover,
+    #jeilbrek:focus,
+    #reloadBtn:hover,
+    #reloadBtn:focus,
+    .auto-jb-label:hover {
       background: var(--panel-2);
       border-color: var(--accent);
       color: var(--glow);
       outline: 0;
     }
-    #kernel-options input[type="radio"]:focus + .chain-option,
-    #jeilbrek:focus, #reloadBtn:focus {
+
+    #kernel-options input[type="radio"]:focus+.chain-option,
+    #jeilbrek:focus,
+    #reloadBtn:focus {
       box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
     }
-    #jeilbrek:disabled { cursor: wait; opacity: .5; }
-    .auto-jb { align-items: center; display: flex; gap: 6px; }
-    .auto-jb-label { align-items: center; display: flex; font-size: 13px; }
-    #autoJbInput { height: 16px; width: 16px; }
+
+    #jeilbrek:disabled {
+      cursor: wait;
+      opacity: .5;
+    }
+
+    .auto-jb {
+      align-items: center;
+      display: flex;
+      gap: 6px;
+    }
+
+    .auto-jb-label {
+      align-items: center;
+      display: flex;
+      font-size: 13px;
+    }
+
+    #autoJbInput {
+      height: 16px;
+      width: 16px;
+    }
 
     /* ── Footer ─────────────────────────────────────────── */
-    .zol-foot { color: var(--dim); font-size: 12px; margin-top: auto; padding: 14px 0 2px; text-align: center; }
-    .zol-foot a { color: var(--muted); }
-    .zol-foot a:hover { color: var(--glow); }
+    .zol-foot {
+      color: var(--dim);
+      font-size: 12px;
+      margin-top: auto;
+      padding: 14px 0 2px;
+      text-align: center;
+    }
+
+    .zol-foot a {
+      color: var(--muted);
+    }
+
+    .zol-foot a:hover {
+      color: var(--glow);
+    }
 
     @media (max-width: 600px) {
-      .zol-fw-num { font-size: 34px; }
-      #kernel-options { flex-direction: column; align-items: flex-start; }
-      .chain-options { width: 100%; }
-      .chain-option { flex: 1; }
+      .zol-fw-num {
+        font-size: 34px;
+      }
+
+      #kernel-options {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .chain-options {
+        width: 100%;
+      }
+
+      .chain-option {
+        flex: 1;
+      }
     }
   </style>
 </head>
@@ -242,9 +463,11 @@
 
     <!-- Success block -->
     <div id="zol-done" role="status" aria-live="assertive">
-      <div class="done-ic">✓</div>
-      <div class="done-txt">ALL DONE</div>
-      <div class="done-sub">GoldHEN v2.4b18.13 loaded successfully</div>
+      <img class="done-logo" src="../../logo.png" alt="Zaki OpenLine">
+      <div class="done-ic">&#10003;</div>
+      <div class="done-txt">JAILBREAK DONE</div>
+      <div class="done-ver">GoldHEN v2.4b18.13 Loaded</div>
+      <div class="done-sub">Zaki OpenLine &mdash; psx8.github.io</div>
     </div>
 
     <div class="zol-controls">
@@ -283,12 +506,12 @@
       if (!cache || !document.documentElement.hasAttribute('manifest')) {
         show('Application cache unavailable'); return;
       }
-      cache.addEventListener('checking',    function () { show('Checking offline cache...'); }, false);
+      cache.addEventListener('checking', function () { show('Checking offline cache...'); }, false);
       cache.addEventListener('downloading', function () { show('Installing offline cache...'); }, false);
-      cache.addEventListener('progress',    function (e) { if (e && e.total > 0) show('Caching ' + Math.round(e.loaded / e.total * 100) + '%'); }, false);
-      cache.addEventListener('cached',      function () { show('Cached for offline use', true); }, false);
-      cache.addEventListener('noupdate',    function () { show('Cached — offline ready', true); }, false);
-      cache.addEventListener('updateready', function () { show('Cache updated — reloading...', true); try { cache.swapCache(); } catch(e){} setTimeout(function(){ location.reload(); }, 800); }, false);
+      cache.addEventListener('progress', function (e) { if (e && e.total > 0) show('Caching ' + Math.round(e.loaded / e.total * 100) + '%'); }, false);
+      cache.addEventListener('cached', function () { show('Cached for offline use', true); }, false);
+      cache.addEventListener('noupdate', function () { show('Cached — offline ready', true); }, false);
+      cache.addEventListener('updateready', function () { show('Cache updated — reloading...', true); try { cache.swapCache(); } catch (e) { } setTimeout(function () { location.reload(); }, 800); }, false);
       cache.addEventListener('error', function () {
         if (cache.status === cache.IDLE || cache.status === cache.UPDATEREADY) show('Cached — offline ready', true);
         else show('Cache failed — check connection');
@@ -314,6 +537,8 @@
       var ob = new MutationObserver(function () {
         if (lbl.textContent === 'Completed') {
           document.body.classList.add('jb-success');
+          var con = document.getElementById('console');
+          if (con) con.textContent = '';
           ob.disconnect();
         }
       });
@@ -321,4 +546,5 @@
     }());
   </script>
 </body>
+
 </html>

@@ -120,7 +120,7 @@ function array_from_address(addr, size) {
     return og_array;
 }
 
-function toogle_payload(PLfile) {
+function toogle_payload(PLfile, showJailbreakDone) {
  try {
   var loader_addr = chain.sysp('mmap', 0, 0x1000, 7, 0x41000, -1, 0);
   var tmpStubArray = array_from_address(loader_addr, 1);
@@ -144,6 +144,7 @@ function toogle_payload(PLfile) {
       pl.set(shellcode,0);
       var pthread = malloc(0x10);
       call_nze('pthread_create', pthread, 0, loader_addr, payload_buffer);
+      if (showJailbreakDone) load_exploit_done();
       localStorage.passcount = ++localStorage.passcount;
       if (window.passCounter) window.passCounter.innerHTML = localStorage.passcount;
      } else {
@@ -170,8 +171,7 @@ function toogle_payload(PLfile) {
 window.toogle_payload = toogle_payload;
 
 function Exploit_done(){
-load_exploit_done();
-toogle_payload('goldhen.bin');
+toogle_payload('goldhen.bin', true);
 }
 
 // sys/socket.h

@@ -223,14 +223,20 @@ if (SHOW_LOG && !SENT_HOME && document.body) document.body.className = "log";
    costs nothing and a reload is enough; a failure after it may leave the
    handles armed, and then only a cold start is safe. */
 function finishUI(ok, ran) {
-  if (SHOW_LOG || !document.body) return;
+  if (!document.body) return;
   const m = document.getElementById("msg");
   if (m)
     m.textContent = ok
-      ? "DONE"
+      ? "JAILBREAK DONE"
       : ran
         ? "Restart your console"
         : "Refresh the page and run again";
+  if (SHOW_LOG) {
+    /* In log mode: overlay the done/fail class on the existing "log" class so
+       body.log.done CSS rules fire (the done bar at the bottom). */
+    document.body.classList.add(ok ? "done" : "fail");
+    return;
+  }
   document.body.className = ok ? "done" : "fail";
 }
 function mark(tag, detail) {
@@ -889,13 +895,17 @@ let mainMf = null,
       /* Arming requires a step from the landing page. A probe
          (afterglow=probe) fires no trigger and patches nothing, so a restored
          page may run that. */
-      let agOk = false, agRan = false;
+      let agOk = false, agRan = false, goldhenLoaded = false;
       try {
         const ag = await import("./afterglow.js");
         // Exactly what afterglow reaches for, counted rather than guessed.
         const agCtx = {
           p: p, callAddr: callAddr, bufAddr: bufAddr, errno: errno,
           params: params, keepAlive: keepAlive, mark: mark, state: state,
+          onGoldhenLoaded: function () {
+            goldhenLoaded = true;
+            finishUI(true, true);
+          },
           libkernelBase: libkernelBase, webkitBase: webkitBase,
           stubAddr: stubAddr, off: off, fw: fwKey,
           prepareMany: prepareMany, runPrepared: runPrepared,
@@ -912,7 +922,8 @@ let mainMf = null,
       } catch (agError) {
         mark("AG-FAIL", agError && agError.message ? agError.message : String(agError));
       }
-      finishUI(agOk, agRan);
+      const payloadMode = params.get("mode") === "goldhen";
+      finishUI(agOk && (!payloadMode || goldhenLoaded), agRan);
       // Swap the address out. The browser restores the last one after a
       // reload, and an enabler that restarts SceShellUI causes exactly that
       // reload -- so the last address must not be the one that runs the

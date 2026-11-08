@@ -76,6 +76,38 @@
         #state { font-size: 19px; margin: 14px 0 8px; }
         #out { height: calc(100vh - 120px); font-size: 12px; }
     }
+    #zol-success {
+        align-items: center;
+        background: rgba(0, 16, 8, .97);
+        border: 3px solid #00df88;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        position: fixed;
+        top: 0; right: 0; bottom: 0; left: 0;
+        text-align: center;
+        z-index: 9999;
+    }
+    body.jb-success #zol-success { display: flex; }
+    #zol-success img { height: 320px; object-fit: contain; width: 320px; }
+    #zol-success .success-text {
+        background: #001a0a;
+        border: 3px solid #00df88;
+        border-radius: 8px;
+        bottom: 8%;
+        color: #fff;
+        font: 900 64px/1.2 Arial, sans-serif;
+        left: 5%;
+        letter-spacing: 4px;
+        padding: 18px 24px;
+        position: fixed;
+        text-shadow: 0 0 18px #00df88;
+        width: 90%;
+    }
+    @media (max-height: 700px) {
+        #zol-success img { height: 180px; width: 180px; }
+        #zol-success .success-text { font-size: 42px; }
+    }
 </style>
 </head>
 <body>
@@ -87,6 +119,10 @@
 
         <div id="state">loading jailbreak...</div>
         <div id="out"></div>
+    </div>
+    <div id="zol-success" role="status" aria-live="assertive">
+        <img src="../logo.png" alt="Zaki OpenLine">
+        <div class="success-text">JAILBREAK DONE</div>
     </div>
 <script type="module">import "./jb.js";</script>
 <script>
@@ -138,6 +174,7 @@
             var txt = out ? out.textContent : "";
             if (successSeen(txt)) {
                 try { sessionStorage.removeItem(KEY); } catch (e) {}
+                document.body.classList.add("jb-success");
                 handled = true;
                 return;
             }

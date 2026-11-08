@@ -1,272 +1,392 @@
 <!doctype html>
 <html lang="en" manifest="cache.appcache">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Zaki OpenLine // afterglow</title>
-    <!-- No external resources. Every subresource is a timing shift that the
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Zaki OpenLine // afterglow</title>
+  <!-- No external resources. Every subresource is a timing shift that the
          exploit is sensitive to. All styles are inline, as in the original. -->
-    <style>
-      :root {
-        --bg:     #050508;
-        --panel:  #080b10;
-        --sunk:   #0d1218;
-        --line:   #1c2e42;
-        --fg:     #d8e8f4;
-        --bright: #eaf3ff;
-        --dim:    #6a86a0;
-        --faint:  #384858;
-        --ok:     #00df88;
-        --bad:    #ff5555;
-        --warn:   #e0a830;
-        --accent: #0098e8;
-        --glow:   #00cfff;
-        --glow2:  #005a9e;
-        --sans:   "Segoe UI", system-ui, -apple-system, sans-serif;
-        --mono:   Consolas, "DejaVu Sans Mono", monospace;
-      }
-      * { box-sizing: border-box; }
-      html, body { background: var(--bg); color: var(--fg); font: 15px/1.45 var(--sans); margin: 0; min-height: 100%; padding: 0; }
+  <style>
+    :root {
+      --bg: #050508;
+      --panel: #080b10;
+      --sunk: #0d1218;
+      --line: #1c2e42;
+      --fg: #d8e8f4;
+      --bright: #eaf3ff;
+      --dim: #6a86a0;
+      --faint: #384858;
+      --ok: #00df88;
+      --bad: #ff5555;
+      --warn: #e0a830;
+      --accent: #0098e8;
+      --glow: #00cfff;
+      --glow2: #005a9e;
+      --sans: "Segoe UI", system-ui, -apple-system, sans-serif;
+      --mono: Consolas, "DejaVu Sans Mono", monospace;
+    }
 
-      /* ── Top brand bar ────────────────────────────────── */
-      #brand {
-        align-items: center;
-        background: var(--panel);
-        border-bottom: 1px solid var(--line);
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 14px;
-      }
-      #brand b { color: var(--bright); font-size: 15px; font-weight: 700; letter-spacing: .04em; }
-      #brand b em { color: var(--glow); font-style: normal; }
-      #brand .exploit-pill {
-        align-items: center;
-        background: var(--sunk);
-        border: 1px solid var(--line);
-        border-radius: 3px;
-        color: var(--dim);
-        display: flex;
-        font-size: 12px;
-        gap: 5px;
-        padding: 2px 8px;
-      }
-      #brand .exploit-pill .dot { background: var(--accent); border-radius: 50%; height: 6px; width: 6px; }
+    * {
+      box-sizing: border-box;
+    }
 
-      /* ── Glowing FW badge in header ───────────────────── */
-      #fw-badge {
-        text-align: right;
-        line-height: 1;
+    html,
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font: 15px/1.45 var(--sans);
+      margin: 0;
+      min-height: 100%;
+      padding: 0;
+    }
+
+    /* ── Top brand bar ────────────────────────────────── */
+    #brand {
+      align-items: center;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 14px;
+    }
+
+    #brand b {
+      color: var(--bright);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+
+    #brand b em {
+      color: var(--glow);
+      font-style: normal;
+    }
+
+    #brand .exploit-pill {
+      align-items: center;
+      background: var(--sunk);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      color: var(--dim);
+      display: flex;
+      font-size: 12px;
+      gap: 5px;
+      padding: 2px 8px;
+    }
+
+    #brand .exploit-pill .dot {
+      background: var(--accent);
+      border-radius: 50%;
+      height: 6px;
+      width: 6px;
+    }
+
+    /* ── Glowing FW badge in header ───────────────────── */
+    #fw-badge {
+      text-align: right;
+      line-height: 1;
+    }
+
+    #fw-badge .fw-lbl {
+      color: var(--faint);
+      font-size: 9px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    #fw-badge .fw-num {
+      color: var(--glow);
+      font: 900 32px/1 var(--sans);
+      letter-spacing: -1px;
+      text-shadow: 0 0 16px var(--accent), 0 0 32px var(--glow2);
+    }
+
+    /* ── RAM readout ──────────────────────────────────── */
+    #ramBox {
+      background: var(--sunk);
+      border-bottom: 1px solid var(--line);
+      color: var(--ok);
+      font: 11px/1.4 var(--mono);
+      overflow: hidden;
+      padding: 4px 14px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ── Spinner (shown while not .log / .done / .fail) ─ */
+    #spin {
+      animation: spin .9s linear infinite;
+      border: 4px solid var(--line);
+      border-radius: 50%;
+      border-top-color: var(--ok);
+      height: 46px;
+      left: 50%;
+      margin: -23px 0 0 -23px;
+      position: fixed;
+      top: calc(50% + 20px);
+      width: 46px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
       }
-      #fw-badge .fw-lbl { color: var(--faint); font-size: 9px; letter-spacing: .15em; text-transform: uppercase; }
-      #fw-badge .fw-num {
-        color: var(--glow);
-        font: 900 32px/1 var(--sans);
-        letter-spacing: -1px;
-        text-shadow: 0 0 16px var(--accent), 0 0 32px var(--glow2);
+    }
+
+    /* ── Status message (shown in .done / .fail) ─────── */
+    #msg {
+      display: none;
+      font-size: 18px;
+      left: 0;
+      letter-spacing: 1px;
+      position: fixed;
+      right: 0;
+      text-align: center;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    #state,
+    #out {
+      display: none;
+    }
+
+    /* ── .log — full-height flex log view ────────────── */
+    body.log {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    body.log #spin,
+    body.log #msg {
+      display: none;
+    }
+
+    body.log #wrap {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      padding: 10px 14px 24px;
+    }
+
+    body.log #state {
+      border-left: 3px solid var(--accent);
+      color: var(--bright);
+      display: block;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      padding-left: 10px;
+    }
+
+    body.log #out {
+      background: var(--sunk);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      color: var(--fg);
+      display: block;
+      flex: 1;
+      font: 12px/1.5 var(--mono);
+      min-height: 0;
+      overflow-y: auto;
+      padding: 10px 12px;
+      white-space: pre-wrap;
+    }
+
+    /* ── .done — success state ────────────────────────── */
+    body.done {
+      background: #001a0a;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      transition: background .5s;
+    }
+
+    body.done #spin,
+    body.done #ramBox,
+    body.done #wrap,
+    body.done .byline {
+      display: none;
+    }
+
+    body.done #msg {
+      display: none;
+    }
+
+    /* ── Full-screen done overlay (flex child, fills space below brand bar) */
+    #zol-done-full {
+      align-items: center;
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 0;
+    }
+
+    body.done #zol-done-full {
+      display: flex;
+    }
+
+    .dfl-logo {
+      box-shadow: 0 0 72px rgba(0, 223, 136, .6);
+      height: 320px;
+      margin-bottom: 28px;
+      object-fit: contain;
+      width: 320px;
+    }
+
+    .dfl-ic {
+      color: #00df88;
+      font-size: 96px;
+      line-height: 1;
+      text-shadow: 0 0 48px #00df88;
+    }
+
+    .dfl-txt {
+      color: #00df88;
+      font-size: 64px;
+      font-weight: 900;
+      letter-spacing: 8px;
+      margin-top: 12px;
+      text-align: center;
+      text-shadow: 0 0 32px #00df88;
+    }
+
+    body.done .dfl-txt {
+      background: #001a0a;
+      border: 3px solid #00df88;
+      border-radius: 8px;
+      bottom: 8%;
+      box-shadow: 0 0 36px rgba(0, 223, 136, .65);
+      color: #fff;
+      display: block !important;
+      font-size: 64px;
+      left: 5%;
+      letter-spacing: 4px;
+      padding: 18px 24px;
+      position: fixed;
+      text-shadow: 0 0 18px #00df88;
+      width: 90%;
+      z-index: 20;
+    }
+
+    .dfl-ver {
+      color: #00df88;
+      font-size: 22px;
+      letter-spacing: 1px;
+      margin-top: 24px;
+      opacity: .9;
+      text-align: center;
+    }
+
+    @media (max-height: 700px) {
+      .dfl-logo {
+        height: 180px;
+        width: 180px;
       }
 
-      /* ── RAM readout ──────────────────────────────────── */
-      #ramBox {
-        background: var(--sunk);
-        border-bottom: 1px solid var(--line);
-        color: var(--ok);
-        font: 11px/1.4 var(--mono);
-        overflow: hidden;
-        padding: 4px 14px;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+      .dfl-ic {
+        font-size: 68px;
       }
 
-      /* ── Spinner (shown while not .log / .done / .fail) ─ */
-      #spin {
-        animation: spin .9s linear infinite;
-        border: 4px solid var(--line);
-        border-radius: 50%;
-        border-top-color: var(--ok);
-        height: 46px;
-        left: 50%;
-        margin: -23px 0 0 -23px;
-        position: fixed;
-        top: calc(50% + 20px);
-        width: 46px;
-      }
-      @keyframes spin { to { transform: rotate(360deg); } }
-
-      /* ── Status message (shown in .done / .fail) ─────── */
-      #msg {
-        display: none;
-        font-size: 18px;
-        left: 0;
-        letter-spacing: 1px;
-        position: fixed;
-        right: 0;
-        text-align: center;
-        top: 50%;
-        transform: translateY(-50%);
+      .dfl-txt {
+        font-size: 46px;
       }
 
-      #state, #out { display: none; }
+      body.done .dfl-txt {
+        font-size: 40px;
+      }
+    }
 
-      /* ── .log — full-height flex log view ────────────── */
-      body.log {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-      }
-      body.log #spin, body.log #msg { display: none; }
-      body.log #wrap {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        min-height: 0;
-        padding: 10px 14px 24px;
-      }
-      body.log #state {
-        border-left: 3px solid var(--accent);
-        color: var(--bright);
-        display: block;
-        font-size: 15px;
-        font-weight: 700;
-        margin-bottom: 8px;
-        padding-left: 10px;
-      }
-      body.log #out {
-        background: var(--sunk);
-        border: 1px solid var(--line);
-        border-radius: 4px;
-        color: var(--fg);
-        display: block;
-        flex: 1;
-        font: 12px/1.5 var(--mono);
-        min-height: 0;
-        overflow-y: auto;
-        padding: 10px 12px;
-        white-space: pre-wrap;
-      }
+    /* ── .fail — failure state ────────────────────────── */
+    body.fail #spin {
+      display: none;
+    }
 
-      /* ── .done — success state ────────────────────────── */
-      body.done { background: #001a0a; transition: background .5s; }
-      body.done #spin, body.done #brand { display: none; }
-      body.done #msg {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        color: var(--ok);
-        font-size: 18px;
-        font-weight: 700;
-        letter-spacing: 2px;
-        top: 50%;
-      }
-      /* "ALL DONE" heading above the #msg text */
-      body.done #msg::before {
-        content: "✓";
-        color: var(--ok);
-        font-size: 72px;
-        font-weight: 900;
-        line-height: 1;
-        text-shadow: 0 0 40px var(--ok);
-        display: block;
-        margin-bottom: 12px;
-      }
-      body.done #msg::after {
-        content: "ALL DONE";
-        color: var(--ok);
-        display: block;
-        font-size: 32px;
-        font-weight: 900;
-        letter-spacing: 6px;
-        text-shadow: 0 0 24px var(--ok);
-        margin-bottom: 10px;
-      }
-      /* In log mode + done: keep log visible, dim it, show done bar */
-      body.log.done #spin { display: none; }
-      body.log.done #msg  { display: none; }
-      body.log.done #wrap { opacity: .4; }
-      body.log.done #zol-done-bar { display: flex; }
+    body.fail #msg {
+      display: block;
+      color: var(--bad);
+    }
 
-      /* ── Success bar for log mode ──────────────────────── */
-      #zol-done-bar {
-        align-items: center;
-        background: rgba(0,180,80,.1);
-        border-top: 2px solid var(--ok);
-        bottom: 0;
-        display: none;
-        gap: 10px;
-        justify-content: center;
-        left: 0;
-        padding: 12px 16px;
-        position: fixed;
-        right: 0;
-      }
-      #zol-done-bar .ic { color: var(--ok); font-size: 24px; }
-      #zol-done-bar .txt { color: var(--ok); font-size: 18px; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 16px var(--ok); }
+    /* ── Retry notice ─────────────────────────────────── */
+    .notice {
+      background: #2a0a0a;
+      border: 2px solid #d04040;
+      color: #f99;
+      font: 700 18px/1.4 var(--sans);
+      margin: 1em 0;
+      padding: .7em 1em;
+    }
 
-      /* ── .fail — failure state ────────────────────────── */
-      body.fail #spin { display: none; }
-      body.fail #msg  { display: block; color: var(--bad); }
+    .byline {
+      bottom: 9px;
+      color: var(--faint);
+      font: 11px/1 var(--mono);
+      left: 11px;
+      letter-spacing: .06em;
+      position: fixed;
+    }
 
-      /* ── Retry notice ─────────────────────────────────── */
-      .notice {
-        background: #2a0a0a;
-        border: 2px solid #d04040;
-        color: #f99;
-        font: 700 18px/1.4 var(--sans);
-        margin: 1em 0;
-        padding: .7em 1em;
-      }
+    .ok {
+      color: var(--ok);
+    }
 
-      .byline {
-        bottom: 9px;
-        color: var(--faint);
-        font: 11px/1 var(--mono);
-        left: 11px;
-        letter-spacing: .06em;
-        position: fixed;
-      }
-      body.log.done .byline { display: none; }
+    .bad {
+      color: var(--bad);
+    }
 
-      .ok   { color: var(--ok); }
-      .bad  { color: var(--bad); }
-      .warn { color: var(--warn); }
-      code  { color: #7ab0d8; }
-    </style>
-  </head>
-  <body>
-    <!-- jb.js contract: #ramBox, #msg, #state, #out — read by name.
+    .warn {
+      color: var(--warn);
+    }
+
+    code {
+      color: #7ab0d8;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- jb.js contract: #ramBox, #msg, #state, #out — read by name.
          Body classes set by jb.js: .log (log view), .done (success), .fail (error). -->
-    <div id="brand">
-      <div>
-        <b>Zaki <em>OpenLine</em></b>
-        <div class="exploit-pill"><span class="dot"></span>afterglow</div>
-      </div>
-      <div id="fw-badge">
-        <div class="fw-lbl">FIRMWARE</div>
-        <div class="fw-num" id="fw-num-inner">—</div>
-      </div>
+  <div id="brand">
+    <div>
+      <b>Zaki <em>OpenLine</em></b>
+      <div class="exploit-pill"><span class="dot"></span>afterglow</div>
     </div>
-    <div id="ramBox">RAM: checking...</div>
-    <div id="spin"></div>
-    <div id="msg">Restart your console</div>
-    <div id="wrap">
-      <div id="state"></div>
-      <div id="out"></div>
+    <div id="fw-badge">
+      <div class="fw-lbl">FIRMWARE</div>
+      <div class="fw-num" id="fw-num-inner">—</div>
     </div>
-    <!-- Success bar shown in log+done mode -->
-    <div id="zol-done-bar">
-      <span class="ic">✓</span>
-      <span class="txt">ALL DONE</span>
-    </div>
-    <p class="byline">by well0nez/m0zz · Zaki OpenLine</p>
-    <script>
-      /* FW badge from UA */
-      (function () {
-        var m = navigator.userAgent.match(/PlayStation\s*4[\s\/](\d+\.\d+)/i);
-        var el = document.getElementById('fw-num-inner');
-        if (m && el) el.textContent = m[1];
-      }());
-    </script>
-    <script type="module">
-      import "./jb.js";
-    </script>
-  </body>
+  </div>
+  <div id="ramBox">RAM: checking...</div>
+  <div id="spin"></div>
+  <div id="msg">Restart your console</div>
+  <div id="wrap">
+    <div id="state"></div>
+    <div id="out"></div>
+  </div>
+  <!-- Full-screen done overlay -->
+  <div id="zol-done-full">
+    <img class="dfl-logo" src="../logo.png" alt="Zaki OpenLine">
+    <div class="dfl-ic">&#10003;</div>
+    <div class="dfl-txt">JAILBREAK DONE</div>
+    <div class="dfl-ver">GoldHEN v2.4b18.13 &mdash; Zaki OpenLine</div>
+  </div>
+  <p class="byline">by well0nez/m0zz · Zaki OpenLine</p>
+  <script>
+    /* FW badge from UA */
+    (function () {
+      var m = navigator.userAgent.match(/PlayStation\s*4[\s\/](\d+\.\d+)/i);
+      var el = document.getElementById('fw-num-inner');
+      if (m && el) el.textContent = m[1];
+    }());
+  </script>
+  <script type="module">
+    import "./jb.js";
+  </script>
+</body>
+
 </html>

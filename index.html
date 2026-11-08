@@ -66,8 +66,24 @@
     }
 
     if (!fw) {
-      /* Not a PS4 (desktop browser, PS5, unknown) → original PSPulse site. */
-      redirect('https://psx8.github.io');
+      /* Not a PS4 — detect platform and show a message; no redirect. */
+      var uaStr = navigator.userAgent;
+      var platform;
+      if (/PlayStation 5/i.test(uaStr))                        platform = 'PlayStation 5';
+      else if (/iPhone/i.test(uaStr))                          platform = 'iPhone (Safari)';
+      else if (/iPad/i.test(uaStr))                            platform = 'iPad (Safari)';
+      else if (/Android/i.test(uaStr) && /Chrome/i.test(uaStr)) platform = 'Chrome (Android)';
+      else if (/Android/i.test(uaStr))                         platform = 'Android browser';
+      else if (/Edg\//i.test(uaStr))                           platform = 'Microsoft Edge';
+      else if (/Firefox/i.test(uaStr))                         platform = 'Firefox';
+      else if (/Chrome/i.test(uaStr))                          platform = 'Chrome';
+      else if (/Safari/i.test(uaStr))                          platform = 'Safari';
+      else                                                     platform = 'unknown browser';
+      msg.textContent = '[ !! ] not a PS4 browser';
+      err.style.display = 'block';
+      err.innerHTML =
+        'Detected: <span style="color:var(--accent)">' + platform + '</span><br>' +
+        'This page is for PS4 browsers only.';
     } else {
       var fwStr = fw.major + '.' + (fw.minor < 10 ? '0' + fw.minor : fw.minor);
       msg.textContent = '[ ok ] PS4 FW ' + fwStr + ' detected';

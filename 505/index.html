@@ -84,6 +84,11 @@
         #msgs2 h1, #msgs h1 { color: #f5f5f5 !important; font-size: 16px; font-weight: 400; line-height: 1.45; margin: 0; }
         #menu { display: none; }
         #msgs { border-left: 2px solid #a294ff; color: #f5f5f5; font-size: 16px; line-height: 1.45; min-height: 24px; padding: 4px 10px; }
+        #goldhen-done { align-items: center; background: rgba(0,16,8,.97); border: 3px solid #00df88; display: none; flex-direction: column; justify-content: center; position: fixed; top: 0; right: 0; bottom: 0; left: 0; text-align: center; z-index: 9999; }
+        body.goldhen-done #goldhen-done { display: flex; }
+        #goldhen-done img { height: 320px; object-fit: contain; width: 320px; }
+        #goldhen-done strong { background: #001a0a; border: 3px solid #00df88; border-radius: 8px; bottom: 8%; color: #fff; font: 900 64px/1.2 Arial,sans-serif; left: 5%; letter-spacing: 4px; padding: 18px 24px; position: fixed; text-shadow: 0 0 18px #00df88; width: 90%; }
+        @media (max-height: 700px) { #goldhen-done img { height: 180px; width: 180px; } #goldhen-done strong { font-size: 42px; } }
 
         /* Controls */
         .controls { border: 1px solid #2e2e2e; margin-top: 14px; padding: 14px; }
@@ -172,6 +177,7 @@
 </head>
 
 <body onload="start505Host();">
+    <div id="goldhen-done" role="status" aria-live="assertive"><img src="../logo.png" alt="Zaki OpenLine"><strong>JAILBREAK DONE</strong></div>
     <script>
         var host505Started = false;
         var host505Watchdog = null;
@@ -450,6 +456,7 @@
 
         function allset() {
             msgs.innerHTML = LoadedMSG;
+            if (LoadedMSG.indexOf('GoldHEN') !== -1) document.body.classList.add('goldhen-done');
         }
 
         var payloadBusy = false;

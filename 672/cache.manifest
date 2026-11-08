@@ -1,9 +1,10 @@
 CACHE MANIFEST
 # resource-path-fix-20261021-main-v2
 # offline-manifests-v1-20261021
-# v1.8 - goldhen b18.12 offline-assets-20261003
+# v1.9 - large GoldHEN success screen 20261108
 
 CACHE:
+../logo.png
 goldhen10.bin
 index.html
 pl_loader.js

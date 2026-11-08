@@ -135,7 +135,13 @@
 
       try {
         var s = appCache.status;
-        if      (s === appCache.IDLE)         { clearWd(); go(); }
+        if      (s === appCache.IDLE)         {
+          /* IDLE means the current cache is usable; it does not mean the
+             manifest check for this visit has finished. Force the check and
+             wait for noupdate/updateready before launching the exploit. */
+          line2.textContent = 'checking for host updates...';
+          try { appCache.update(); } catch (e) { clearWd(); go(); }
+        }
         else if (s === appCache.UPDATEREADY)  { clearWd(); try { appCache.swapCache(); } catch (e) {} go(); }
         else if (s === appCache.UNCACHED || s === appCache.CHECKING || s === appCache.DOWNLOADING) {
           line2.textContent = 'caching files...';

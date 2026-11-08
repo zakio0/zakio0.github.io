@@ -2353,6 +2353,9 @@ async function attempt(ctx, opts) {
     iface.payload = (mode === "goldhen")
       ? await loadEnabler(want || "goldhen.bin", k, kbase, hostFree)
       : await loadPayload(want || "hen.bin");
+    if (iface.payload && mode === "goldhen" && typeof ctx.onGoldhenLoaded === "function") {
+      ctx.onGoldhenLoaded();
+    }
   }
   say("done -- jailbroken, rwx open, syscall 11 is a kexec gate"
       + (iface.payload ? ", enabler running" : ""));
